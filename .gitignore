@@ -1,0 +1,135 @@
+# Rust/Cargo build artifacts
+/target/
+**/*.rs.bk
+Cargo.lock
+*.pdb
+
+# macOS system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.vim/
+*.tmp
+*.temp
+
+# Terminal application specific
+# Configuration and data files
+config/
+settings/
+*.conf
+*.config
+user_settings.json
+layout_*.json
+theme_cache/
+command_history.db
+command_history.sqlite
+session_*.json
+
+# Logs and debugging
+logs/
+*.log
+*.log.*
+debug.txt
+trace.txt
+crash_reports/
+
+# Cache and temporary files
+cache/
+tmp/
+temp/
+.cache/
+*.cache
+.tmp/
+
+# SSH and security related
+.ssh/
+private_keys/
+*.pem
+*.key
+*.cert
+*.crt
+ssh_config
+known_hosts
+
+# Plugin and extension directories
+plugins/user/
+extensions/custom/
+user_plugins/
+
+# Test artifacts
+tests/fixtures/output/
+test_output/
+coverage/
+*.profraw
+*.profdata
+
+# Documentation build artifacts
+docs/build/
+docs/_build/
+book/
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# OS generated files
+# Windows
+ehthumbs.db
+Desktop.ini
+
+# Linux
+.directory
+.Trash-*
+
+# Environment and local development
+.env
+.env.local
+.env.*.local
+local_config.toml
+dev_settings.json
+
+# Performance and profiling
+*.perf
+perf.data*
+callgrind.out.*
+massif.out.*
+
+# Package manager artifacts
+*.tar.gz
+*.tgz
+*.zip
+*.deb
+*.rpm
+*.dmg
+*.pkg
+
+# Distribution builds
+dist/
+build/
+release/
+packages/
+
+# Local development overrides
+Cargo.local.toml
+local.toml
+override.toml
+# Large theme background images - should be stored with Git LFS or external CDN
+themes/**/*.jpg
+themes/**/*.png
+themes/**/*.jpeg
+*.jpg
+*.png
+*.jpeg

@@ -1,0 +1,46 @@
+[package]
+name = "warp_themes"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Advanced theme system for Warp terminal with 300+ themes, theme analysis, generation, and preview capabilities"
+keywords = ["themes", "colors", "terminal", "ui", "warp", "accessibility", "harmony"]
+categories = ["gui", "command-line-utilities", "visualization"]
+
+[dependencies]
+# Core dependencies
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml = "0.9"
+anyhow.workspace = true
+thiserror.workspace = true
+
+# File system and path handling
+dirs.workspace = true
+walkdir.workspace = true
+
+# Color parsing and manipulation
+colorsys = "0.6"
+
+# Optional features
+iced = { workspace = true, optional = true }
+iced_core = { workspace = true, optional = true }
+
+[dev-dependencies]
+tokio-test = "0.4"
+
+[features]
+default = ["analysis", "builder", "preview", "iced_integration"]
+# Enable Iced GUI integration
+iced_integration = ["iced", "iced_core"]
+# Enable all bundled themes
+bundled_themes = []
+# Enable theme validation
+validation = []
+# Enable theme analysis and accessibility features
+analysis = []
+# Enable theme builder and generation
+builder = []
+# Enable theme preview generation
+preview = []

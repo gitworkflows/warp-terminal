@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "created_at": "2025-01-21T17:59:00Z",
+    "last_modified": "2025-07-31T15:50:01.333646Z",
+    "backup_count": 0,
+    "profile": null,
+    "auto_save_enabled": true,
+    "format": "Json"
+  },
+  "settings": {
+    "active_tab": "Appearance",
+    "sync_with_os": true,
+    "current_light_theme": "Light",
+    "current_dark_theme": "Dark",
+    "font_family": "Hack",
+    "font_weight": "Normal",
+    "font_size": 16,
+    "line_height": 1.2,
+    "use_thin_strokes": false,
+    "enforce_minimum_contrast": true,
+    "show_ligatures": true,
+    "cursor_type": "Block",
+    "cursor_blink": true,
+    "open_new_windows_with_custom_size": false,
+    "window_columns": 80,
+    "window_rows": 40,
+    "window_opacity": 100.0,
+    "window_blur_radius": 1,
+    "input_type": "Universal",
+    "history_enabled": true,
+    "max_history_entries": 10000,
+    "history_dedup_mode": "Consecutive",
+    "history_save_on_exit": true,
+    "history_sync_across_sessions": false,
+    "history_exclude_patterns": [
+      "rm *",
+      "sudo *"
+    ],
+    "history_include_exit_codes": true,
+    "history_auto_bookmark_successful": false,
+    "history_retention_days": 365,
+    "history_search_fuzzy": true,
+    "enable_autocomplete": true,
+    "enable_ai_command_search": true,
+    "enable_smart_suggestions": true
+  }
+}

@@ -1,0 +1,71 @@
+[workspace]
+members = [".", "themes"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <you@example.com>"]
+license = "MIT"
+
+[workspace.dependencies]
+# Core dependencies
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+thiserror = "1.0"
+async-trait = "0.1"
+
+# File system and path handling
+dirs = "4.0"
+walkdir = "2.0"
+
+# GUI
+iced = { version = "0.12", features = ["canvas", "tokio"] }
+iced_core = "0.12"
+
+[package]
+name = "warp-terminal"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "warp-terminal"
+path = "src/main.rs"
+
+[dependencies]
+iced.workspace = true
+tokio = { version = "1", features = ["full"] }
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml = "0.9"
+anyhow.workspace = true
+thiserror.workspace = true
+async-trait.workspace = true
+dirs.workspace = true
+# warp_themes = { path = "themes", features = ["iced_integration"] }
+warp-workflows-types = { path = "workflows/workflow-types" }
+
+# Additional dependencies specific to our terminal
+fuzzy-matcher = "0.3"
+toml = "0.8"
+uuid = { version = "1", features = ["v4", "serde"] }
+tracing = "0.1"
+iced_style = "0.12"
+which = "8.0.0"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+clipboard = "0.5.0"
+regex = "1.0"
+rfd = "0.14"
+chrono = { version = "0.4", features = ["serde"] }
+walkdir.workspace = true
+
+[dev-dependencies]
+tempfile = "3.0"
+
+[features]
+default = []
+pty = []  # Feature flag for PTY support
+syntax-highlight = []  # Feature flag for syntax highlighting
