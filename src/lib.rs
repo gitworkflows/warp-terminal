@@ -16,6 +16,7 @@ pub mod persistence;
 pub mod editor;
 pub mod ai;
 pub mod handlers;
+pub mod monitoring;
 
 // Re-export key components for the binary and for clarity.
 pub use app::terminal::WarpTerminal;

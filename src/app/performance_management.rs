@@ -9,15 +9,13 @@
 //! - Caching strategies and management
 
 use crate::app::core_architecture::{
-    PerformanceError, ResourceError, CacheError, TerminalError
+    PerformanceError, ResourceError, CacheError
 };
-use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, VecDeque};
-use std::sync::Arc;
 use std::time::{Duration, Instant, SystemTime};
-use tokio::sync::RwLock;
-use tracing::{debug, info, warn, error};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
+use tracing::{debug, info, warn};
 
 /// Performance monitoring system
 impl super::core_architecture::PerformanceMonitor {

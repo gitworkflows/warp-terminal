@@ -52,6 +52,10 @@ warp-workflows-types = { path = "workflows/workflow-types" }
 # Using arboard as a maintained alternative to the clipboard crate
 arboard = "3.3.0"
 
+# Error reporting and monitoring
+sentry = { version = "0.32", features = ["backtrace", "contexts", "panic", "anyhow", "tracing"] }
+sentry-tracing = "0.32"
+
 # Explicitly update xcb to a secure version
 xcb = { version = "1.3.0", features = ["randr"] }
 fuzzy-matcher = "0.3"

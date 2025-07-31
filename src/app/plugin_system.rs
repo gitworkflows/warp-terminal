@@ -226,7 +226,7 @@ pub enum PluginCategory {
     FileManagement,
     NetworkTools,
     DataAnalysis,
-    AI_ML,
+    AiMl,
     Security,
     Visualization,
     Integration,

@@ -8,25 +8,19 @@
 //! - Performance optimization with lazy loading
 //! - Robust error handling and recovery
 
-use crate::executor::command_executor::{CommandExecutor, ExecutionResult};
+use crate::executor::command_executor::ExecutionResult;
 use crate::model::block::{Block, BlockContent, BlockManager, BlockMetadata};
-use crate::model::history::HistoryManager;
-use crate::model::pane::{PaneManager, SplitDirection};
-use crate::persistence::settings_manager::SettingsManager;
-use crate::ui::command_palette::CommandPalette;
-use crate::ui::command_history::CommandHistoryUI;
+use crate::monitoring::{sentry, track_event, report_critical_error};
 
-use iced::{executor, Application, Command, Element, Settings, Theme};
-use iced::widget::{column, container, scrollable, text_input};
+use iced::{Command, Element};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::future::Future;
-use std::path::PathBuf;
 use std::pin::Pin;
 use std::sync::Arc;
 use tokio::sync::{mpsc, RwLock};
 use uuid::Uuid;
-use tracing::{debug, error, info, warn};
+use tracing::{error, info};
 
 /// Enhanced core terminal application with modular architecture
 pub struct EnhancedWarpTerminal {
@@ -387,7 +381,7 @@ pub enum PanelType {
     PluginManager,
     PerformanceMonitor,
     ErrorConsole,
-    AI_Assistant,
+    AiAssistant,
     ThemeEditor,
 }
 
@@ -423,12 +417,44 @@ impl EnhancedWarpTerminal {
     pub async fn new() -> Result<Self, TerminalError> {
         info!("Initializing Enhanced Warp Terminal");
         
-        let state = Arc::new(RwLock::new(TerminalState::new().await?));
-        let event_processor = EventProcessor::new().await?;
-        let plugin_manager = PluginManager::new().await?;
+        // Track terminal initialization
+        if let Some(sentry) = sentry() {
+            sentry.add_breadcrumb("Terminal initialization started", "terminal.lifecycle", sentry::Level::Info);
+        }
+        
+        let state = Arc::new(RwLock::new(
+            TerminalState::new().await.map_err(|e| {
+                let error = anyhow::anyhow!("Failed to initialize terminal state: {}", e);
+                report_critical_error(&error, "Terminal initialization");
+                e
+            })?
+        ));
+        
+        let event_processor = EventProcessor::new().await.map_err(|e| {
+            let error = anyhow::anyhow!("Failed to initialize event processor: {}", e);
+            report_critical_error(&error, "Event processor initialization");
+            e
+        })?;
+        
+        let plugin_manager = PluginManager::new().await.map_err(|e| {
+            let error = anyhow::anyhow!("Failed to initialize plugin manager: {}", e);
+            report_critical_error(&error, "Plugin manager initialization");
+            e
+        })?;
+        
         let performance_monitor = PerformanceMonitor::new();
         let resource_manager = ResourceManager::new();
         let cache_manager = CacheManager::new();
+        
+        // Report successful initialization
+        if let Some(sentry) = sentry() {
+            sentry.add_breadcrumb("Terminal initialization completed", "terminal.lifecycle", sentry::Level::Info);
+            
+            // Track initialization event
+            let mut properties = std::collections::HashMap::new();
+            properties.insert("component".to_string(), "enhanced_terminal".to_string());
+            track_event("terminal_initialized", properties);
+        }
         
         Ok(Self {
             state,
