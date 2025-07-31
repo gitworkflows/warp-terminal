@@ -1,3 +1,0 @@
-[submodule ".trunk/config"]
-	path = .trunk/config
-	url = git@github.com:warpdotdev/oss-trunk-linter-config.git
