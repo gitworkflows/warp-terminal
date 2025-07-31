@@ -1,5 +1,5 @@
 [workspace]
-members = [".", "themes"]
+members = ["."]
 resolver = "2"
 
 [workspace.package]
@@ -45,7 +45,6 @@ anyhow.workspace = true
 thiserror.workspace = true
 async-trait.workspace = true
 dirs.workspace = true
-# warp_themes = { path = "themes", features = ["iced_integration"] }
 warp-workflows-types = { path = "workflows/workflow-types" }
 
 # Additional dependencies specific to our terminal
