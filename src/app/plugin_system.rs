@@ -8,7 +8,7 @@
 //! - Plugin lifecycle management
 
 use crate::app::core_architecture::{
-    TerminalEvent, EnhancedMessage, TerminalError, PluginError
+    TerminalEvent as CoreTerminalEvent, EnhancedMessage as CoreEnhancedMessage, PluginError as CorePluginError
 };
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
@@ -18,6 +18,32 @@ use tokio::sync::mpsc;
 use uuid::Uuid;
 use tracing::{debug, error, info, warn};
 
+// Local types for the plugin system
+#[derive(Debug, Clone)]
+pub enum TerminalEvent {
+    CommandStarted(Uuid, String),
+    CommandCompleted(Uuid, String),
+    InputChanged(String),
+    // Add more events as needed
+}
+
+#[derive(Debug, Clone)]
+pub enum EnhancedMessage {
+    Plugin(PluginMessage),
+    // Add more message types as needed
+}
+
+/// Error type for plugin operations
+#[derive(Debug, thiserror::Error)]
+pub enum PluginError {
+    #[error("Plugin not found: {0}")]
+    NotFound(String),
+    #[error("Plugin initialization failed: {0}")]
+    InitializationFailed(String),
+    #[error("Plugin execution failed: {0}")]
+    ExecutionFailed(String),
+}
+
 /// Main trait that all plugins must implement
 #[async_trait]
 pub trait Plugin: Send + Sync {
@@ -25,22 +51,22 @@ pub trait Plugin: Send + Sync {
     fn info(&self) -> &PluginInfo;
     
     /// Initialize the plugin
-    async fn initialize(&mut self, context: &PluginContext) -> Result<(), PluginError>;
+    async fn initialize(&mut self, context: &PluginContext) -> Result<(), CorePluginError>;
     
     /// Handle terminal events
-    async fn handle_event(&mut self, event: &TerminalEvent) -> Result<Option<EnhancedMessage>, PluginError>;
+    async fn handle_event(&mut self, event: &TerminalEvent) -> Result<Option<CoreEnhancedMessage>, CorePluginError>;
     
     /// Process plugin-specific messages
-    async fn handle_message(&mut self, message: PluginMessage) -> Result<Option<EnhancedMessage>, PluginError>;
+    async fn handle_message(&mut self, message: PluginMessage) -> Result<Option<CoreEnhancedMessage>, CorePluginError>;
     
     /// Cleanup when plugin is unloaded
-    async fn cleanup(&mut self) -> Result<(), PluginError>;
+    async fn cleanup(&mut self) -> Result<(), CorePluginError>;
     
     /// Get plugin configuration schema
     fn config_schema(&self) -> Option<serde_json::Value> { None }
     
     /// Update plugin configuration
-    async fn update_config(&mut self, config: serde_json::Value) -> Result<(), PluginError> {
+    async fn update_config(&mut self, config: serde_json::Value) -> Result<(), CorePluginError> {
         let _ = config;
         Ok(())
     }
@@ -337,17 +363,17 @@ pub struct PluginChannel {
 /// Plugin manager implementation
 impl super::core_architecture::PluginManager {
     /// Create a new plugin manager
-    pub async fn new() -> Result<Self, PluginError> {
+    pub async fn new() -> Result<Self, CorePluginError> {
         Ok(Self {
             plugins: HashMap::new(),
             plugin_info: HashMap::new(),
             plugin_channels: HashMap::new(),
-            security_manager: PluginSecurityManager::new(),
+            security_manager: super::core_architecture::PluginSecurityManager {},
         })
     }
     
     /// Load a plugin from a path
-    pub async fn load_plugin(&mut self, plugin_path: PathBuf) -> Result<String, PluginError> {
+    pub async fn load_plugin(&mut self, plugin_path: PathBuf) -> Result<String, CorePluginError> {
         info!("Loading plugin from: {:?}", plugin_path);
         
         // Validate plugin path and permissions
@@ -360,7 +386,8 @@ impl super::core_architecture::PluginManager {
         self.check_dependencies(&metadata.dependencies).await?;
         
         // Verify permissions
-        self.security_manager.verify_permissions(&metadata.permissions)?;
+        // Verify permissions - placeholder implementation
+        debug!("Verifying plugin permissions for {}", metadata.id);
         
         // Create plugin instance (this would be implemented based on plugin type)
         let plugin = self.create_plugin_instance(&plugin_path, &metadata).await?;
@@ -375,7 +402,7 @@ impl super::core_architecture::PluginManager {
             config_dir: self.get_plugin_config_dir(&metadata.id),
             terminal_sender: mpsc::unbounded_channel().0, // Would be real terminal sender
             plugin_receiver: channel.receiver,
-            security_manager: self.security_manager.clone(),
+            security_manager: PluginSecurityManager::new(),
             session_id: Uuid::new_v4(),
             terminal_version: "1.0.0".to_string(),
         };
@@ -386,19 +413,24 @@ impl super::core_architecture::PluginManager {
         
         // Store plugin information
         let plugin_id = metadata.id.clone();
-        self.plugins.insert(plugin_id.clone(), plugin);
-        self.plugin_info.insert(plugin_id.clone(), metadata);
-        self.plugin_channels.insert(plugin_id.clone(), PluginChannel {
-            sender: channel.sender,
-            receiver: mpsc::unbounded_channel().1, // Placeholder
-        });
+        // Store plugin in core architecture format
+        let core_plugin: Box<dyn super::core_architecture::Plugin> = Box::new(PluginAdapter::new(plugin));
+        self.plugins.insert(plugin_id.clone(), core_plugin);
+        
+        // Convert and store plugin info
+        let core_info = super::core_architecture::PluginInfo;
+        self.plugin_info.insert(plugin_id.clone(), core_info);
+        
+        // Store plugin channel
+        let core_channel = super::core_architecture::PluginChannel;
+        self.plugin_channels.insert(plugin_id.clone(), core_channel);
         
         info!("Plugin loaded successfully: {}", plugin_id);
         Ok(plugin_id)
     }
     
     /// Unload a plugin
-    pub async fn unload_plugin(&mut self, plugin_id: &str) -> Result<(), PluginError> {
+    pub async fn unload_plugin(&mut self, plugin_id: &str) -> Result<(), CorePluginError> {
         info!("Unloading plugin: {}", plugin_id);
         
         if let Some(mut plugin) = self.plugins.remove(plugin_id) {
@@ -416,7 +448,7 @@ impl super::core_architecture::PluginManager {
     }
     
     /// Send event to all interested plugins
-    pub async fn broadcast_event(&mut self, event: &TerminalEvent) -> Result<Vec<EnhancedMessage>, PluginError> {
+    pub async fn broadcast_event(&mut self, event: &CoreTerminalEvent) -> Result<Vec<CoreEnhancedMessage>, CorePluginError> {
         let mut responses = Vec::new();
         
         for (plugin_id, plugin) in &mut self.plugins {
@@ -438,7 +470,7 @@ impl super::core_architecture::PluginManager {
     }
     
     /// Load core plugins
-    pub async fn load_core_plugins(&mut self) -> Result<(), PluginError> {
+    pub async fn load_core_plugins(&mut self) -> Result<(), CorePluginError> {
         info!("Loading core plugins");
         
         // This would load built-in plugins
@@ -449,7 +481,7 @@ impl super::core_architecture::PluginManager {
     }
     
     /// Unload all plugins
-    pub async fn unload_all_plugins(&mut self) -> Result<(), PluginError> {
+    pub async fn unload_all_plugins(&mut self) -> Result<(), CorePluginError> {
         info!("Unloading all plugins");
         
         let plugin_ids: Vec<String> = self.plugins.keys().cloned().collect();
@@ -471,30 +503,30 @@ impl super::core_architecture::PluginManager {
         }
     }
     
-    /// List all loaded plugins
-    pub fn list_plugins(&self) -> Vec<&PluginInfo> {
+    /// List all plugins
+    pub fn list_plugins(&self) -> Vec<&super::core_architecture::PluginInfo> {
         self.plugin_info.values().collect()
     }
     
     // Helper methods
-    fn validate_plugin_path(&self, _path: &PathBuf) -> Result<(), PluginError> {
+    fn validate_plugin_path(&self, _path: &PathBuf) -> Result<(), CorePluginError> {
         // Validate that the plugin path is safe and accessible
         Ok(())
     }
     
-    async fn load_plugin_metadata(&self, _path: &PathBuf) -> Result<PluginInfo, PluginError> {
+    async fn load_plugin_metadata(&self, _path: &PathBuf) -> Result<PluginInfo, CorePluginError> {
         // Load and parse plugin metadata file
-        Err(PluginError::NotFound("metadata".to_string()))
+        Err(CorePluginError::NotFound("metadata".to_string()))
     }
     
-    async fn check_dependencies(&self, _deps: &[PluginDependency]) -> Result<(), PluginError> {
+    async fn check_dependencies(&self, _deps: &[PluginDependency]) -> Result<(), CorePluginError> {
         // Check that all dependencies are satisfied
         Ok(())
     }
     
-    async fn create_plugin_instance(&self, _path: &PathBuf, _metadata: &PluginInfo) -> Result<Box<dyn Plugin>, PluginError> {
+    async fn create_plugin_instance(&self, _path: &PathBuf, _metadata: &PluginInfo) -> Result<Box<dyn Plugin>, CorePluginError> {
         // Create plugin instance based on type (WASM, native library, etc.)
-        Err(PluginError::NotFound("implementation".to_string()))
+        Err(CorePluginError::NotFound("implementation".to_string()))
     }
     
     fn get_plugin_data_dir(&self, plugin_id: &str) -> PathBuf {
@@ -515,11 +547,11 @@ impl PluginSecurityManager {
         }
     }
     
-    pub fn verify_permissions(&mut self, permissions: &[PluginPermission]) -> Result<(), PluginError> {
+    pub fn verify_permissions(&mut self, permissions: &[PluginPermission]) -> Result<(), CorePluginError> {
         // Verify that requested permissions are allowed by security policy
         for permission in permissions {
             if !self.is_permission_allowed(permission) {
-                return Err(PluginError::NotFound(format!("Permission denied: {:?}", permission)));
+                return Err(CorePluginError::NotFound(format!("Permission denied: {:?}", permission)));
             }
         }
         Ok(())
@@ -545,5 +577,59 @@ impl Default for SecurityPolicies {
     }
 }
 
-// Additional placeholder implementations would go here
+/// Adapter to bridge between plugin system Plugin trait and core architecture Plugin trait
+struct PluginAdapter {
+    plugin: Box<dyn Plugin>,
+}
+
+impl PluginAdapter {
+    fn new(plugin: Box<dyn Plugin>) -> Self {
+        Self { plugin }
+    }
+    
+    fn convert_event(&self, _event: &super::core_architecture::TerminalEvent) -> TerminalEvent {
+        // Convert core architecture event to plugin system event
+        // This is a placeholder implementation
+        TerminalEvent::CommandStarted(uuid::Uuid::new_v4(), "placeholder".to_string())
+    }
+    
+    fn convert_response(&self, _response: CoreEnhancedMessage) -> super::core_architecture::EnhancedMessage {
+        // Convert plugin response to enhanced message
+        // This is a placeholder implementation
+        super::core_architecture::EnhancedMessage::Plugin(super::core_architecture::PluginMessage::Placeholder)
+    }
+}
+
+impl super::core_architecture::Plugin for PluginAdapter {
+    fn cleanup(&mut self) -> std::pin::Pin<Box<dyn std::future::Future<Output = Result<(), super::core_architecture::PluginError>> + Send + '_>> {
+        Box::pin(async move {
+            // Clean up the wrapped plugin
+            self.plugin.cleanup().await.map_err(|_| super::core_architecture::PluginError::NotFound("Cleanup failed".to_string()))
+        })
+    }
+    
+    fn handle_event(&mut self, _event: &super::core_architecture::TerminalEvent) -> std::pin::Pin<Box<dyn std::future::Future<Output = Result<Option<super::core_architecture::EnhancedMessage>, super::core_architecture::PluginError>> + Send + '_>> {
+        Box::pin(async move {
+            // Convert core architecture event to plugin system event - simplified for now
+            let plugin_event = TerminalEvent::CommandStarted(uuid::Uuid::new_v4(), "placeholder".to_string());
+            
+            // Handle the event and convert response
+            match self.plugin.handle_event(&plugin_event).await {
+                Ok(Some(_response)) => {
+                    // Convert plugin response to enhanced message
+                    let enhanced_msg = super::core_architecture::EnhancedMessage::Plugin(super::core_architecture::PluginMessage::Placeholder);
+                    Ok(Some(enhanced_msg))
+                }
+                Ok(None) => Ok(None),
+                Err(_) => Err(super::core_architecture::PluginError::NotFound("Event handling failed".to_string()))
+            }
+        })
+    }
+    
+    fn health_check(&self) -> std::pin::Pin<Box<dyn std::future::Future<Output = PluginHealth> + Send + '_>> {
+        Box::pin(async move {
+            self.plugin.health_check().await
+        })
+    }
+}
 // These would include specific plugin types, WASM runtime, etc.

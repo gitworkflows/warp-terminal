@@ -20,7 +20,9 @@ use iced::{executor, Application, Command, Element, Settings, Theme};
 use iced::widget::{column, container, scrollable, text_input};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::future::Future;
 use std::path::PathBuf;
+use std::pin::Pin;
 use std::sync::Arc;
 use tokio::sync::{mpsc, RwLock};
 use uuid::Uuid;
@@ -188,77 +190,77 @@ pub struct EnhancedBlockMetadata {
 /// Event-driven architecture for async processing
 pub struct EventProcessor {
     /// Event channel for async processing
-    event_sender: mpsc::UnboundedSender<TerminalEvent>,
-    event_receiver: Arc<RwLock<mpsc::UnboundedReceiver<TerminalEvent>>>,
+    pub event_sender: mpsc::UnboundedSender<TerminalEvent>,
+    pub event_receiver: Arc<RwLock<mpsc::UnboundedReceiver<TerminalEvent>>>,
     
     /// Event handlers registry
-    handlers: HashMap<EventType, Vec<Box<dyn EventHandler>>>,
+    pub handlers: HashMap<EventType, Vec<Box<dyn EventHandler>>>,
     
     /// Event history for debugging
-    event_history: Vec<EventRecord>,
+    pub event_history: Vec<EventRecord>,
     
     /// Performance tracking
-    processing_metrics: ProcessingMetrics,
+    pub processing_metrics: ProcessingMetrics,
 }
 
 /// Plugin system for extensibility
 pub struct PluginManager {
     /// Loaded plugins
-    plugins: HashMap<String, Box<dyn Plugin>>,
+    pub plugins: HashMap<String, Box<dyn Plugin>>,
     
     /// Plugin metadata
-    plugin_info: HashMap<String, PluginInfo>,
+    pub plugin_info: HashMap<String, PluginInfo>,
     
     /// Plugin communication channels
-    plugin_channels: HashMap<String, PluginChannel>,
+    pub plugin_channels: HashMap<String, PluginChannel>,
     
     /// Plugin permissions and security
-    security_manager: PluginSecurityManager,
+    pub security_manager: PluginSecurityManager,
 }
 
 /// Performance monitoring and optimization
 pub struct PerformanceMonitor {
     /// Performance metrics collection
-    metrics: PerformanceMetrics,
+    pub metrics: PerformanceMetrics,
     
     /// Performance history for analysis
-    history: Vec<PerformanceSnapshot>,
+    pub history: Vec<PerformanceSnapshot>,
     
     /// Optimization suggestions
-    optimizations: Vec<OptimizationSuggestion>,
+    pub optimizations: Vec<OptimizationSuggestion>,
     
     /// Resource usage tracking
-    resource_tracker: ResourceTracker,
+    pub resource_tracker: ResourceTracker,
 }
 
 /// Resource management for memory and cleanup
 pub struct ResourceManager {
     /// Memory usage tracking
-    memory_tracker: MemoryTracker,
+    pub memory_tracker: MemoryTracker,
     
     /// Cleanup scheduler
-    cleanup_scheduler: CleanupScheduler,
+    pub cleanup_scheduler: CleanupScheduler,
     
     /// Resource limits and policies
-    resource_policies: ResourcePolicies,
+    pub resource_policies: ResourcePolicies,
     
     /// Garbage collection hints
-    gc_hints: Vec<GCHint>,
+    pub gc_hints: Vec<GCHint>,
 }
 
 /// Advanced caching system
 pub struct CacheManager {
     /// Multi-level cache hierarchy
-    caches: HashMap<CacheType, Box<dyn Cache>>,
+    pub caches: HashMap<CacheType, Box<dyn Cache>>,
     
     /// Cache policies and configuration
-    policies: CachePolicy,
+    pub policies: CachePolicy,
     
     /// Cache performance metrics
-    metrics: CacheMetrics,
+    pub metrics: CacheMetrics,
     
     /// Cache warming strategies
-    warming_strategies: Vec<WarmingStrategy>,
+    pub warming_strategies: Vec<WarmingStrategy>,
 }
 
 // Event system types
@@ -804,10 +806,19 @@ pub enum CacheError {
 
 // Placeholder message types for compilation
 #[derive(Debug, Clone)]
-pub enum PluginMessage {}
+pub enum PluginMessage {
+    Placeholder, // Add a placeholder variant
+}
 
 #[derive(Debug, Clone)]
-pub enum PerformanceMessage {}
+pub enum PerformanceMessage {
+    StartMonitoring,
+    StopMonitoring,
+    GetMetrics,
+    OptimizePerformance,
+    ClearCache,
+    UpdateThresholds,
+}
 
 #[derive(Debug, Clone)]
 pub enum ResourceMessage {}
@@ -865,17 +876,22 @@ pub struct EventRecord;
 pub struct ProcessingMetrics;
 
 // Cache trait needs to be accessible
+#[async_trait::async_trait]
 pub trait Cache: Send + Sync {
-    fn get(&mut self, key: &str) -> Option<Box<dyn std::any::Any + Send + Sync>>;
-    fn put(&mut self, key: String, value: Box<dyn std::any::Any + Send + Sync>) -> Result<(), CacheError>;
-    fn invalidate(&mut self, key: &str) -> Result<(), CacheError>;
-    fn clear(&mut self) -> Result<(), CacheError>;
-    fn size(&self) -> usize;
+    async fn get(&mut self, key: &str) -> Option<Box<dyn std::any::Any + Send + Sync>>;
+    async fn put(&mut self, key: String, value: Box<dyn std::any::Any + Send + Sync>) -> Result<(), CacheError>;
+    async fn invalidate(&mut self, key: &str) -> Result<(), CacheError>;
+    async fn clear(&mut self) -> Result<(), CacheError>;
+    async fn size(&self) -> usize;
 }
 
 // Placeholder traits and types to avoid missing imports
 pub trait EventHandler: Send + Sync {}
-pub trait Plugin: Send + Sync {}
+pub trait Plugin: Send + Sync {
+    fn cleanup(&mut self) -> Pin<Box<dyn Future<Output = Result<(), PluginError>> + Send + '_>>;
+    fn handle_event(&mut self, event: &TerminalEvent) -> Pin<Box<dyn Future<Output = Result<Option<EnhancedMessage>, PluginError>> + Send + '_>>;
+    fn health_check(&self) -> Pin<Box<dyn Future<Output = crate::app::plugin_system::PluginHealth> + Send + '_>>;
+}
 
 #[derive(Debug, Clone)]
 pub struct PluginInfo;
@@ -895,11 +911,102 @@ pub struct OptimizationSuggestion;
 #[derive(Debug)]
 pub struct ResourceTracker;
 
+impl ResourceTracker {
+    pub async fn start_tracking(&mut self) -> Result<(), PerformanceError> {
+        // Placeholder implementation
+        Ok(())
+    }
+    
+    pub async fn stop_tracking(&mut self) -> Result<(), PerformanceError> {
+        // Placeholder implementation
+        Ok(())
+    }
+    
+    pub async fn get_current_usage(&self) -> crate::app::performance_management::CurrentResourceUsage {
+        // Placeholder implementation
+        crate::app::performance_management::CurrentResourceUsage {
+            cpu: crate::app::performance_management::CpuUsage {
+                usage_percent: 0.0,
+                timestamp: std::time::Instant::now(),
+            },
+            memory: crate::app::performance_management::MemoryUsage {
+                used_bytes: 0,
+                total_bytes: 0,
+                timestamp: std::time::Instant::now(),
+            },
+            disk: crate::app::performance_management::DiskUsage {
+                read_bytes: 0,
+                write_bytes: 0,
+                timestamp: std::time::Instant::now(),
+            },
+            network: crate::app::performance_management::NetworkUsage {
+                rx_bytes: 0,
+                tx_bytes: 0,
+                timestamp: std::time::Instant::now(),
+            },
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct MemoryTracker;
 
+impl MemoryTracker {
+    pub async fn initialize(&mut self) -> Result<(), ResourceError> {
+        // Placeholder implementation
+        Ok(())
+    }
+    
+    pub async fn register_allocation(&mut self, _allocation: &crate::app::performance_management::MemoryAllocation) -> Result<(), ResourceError> {
+        // Placeholder implementation
+        Ok(())
+    }
+    
+    pub async fn release_allocation(&mut self, _allocation_id: uuid::Uuid) -> Result<(), ResourceError> {
+        // Placeholder implementation
+        Ok(())
+    }
+    
+    pub async fn get_usage_summary(&self) -> crate::app::performance_management::MemoryUsageSummary {
+        // Placeholder implementation
+        crate::app::performance_management::MemoryUsageSummary {
+            total_allocated: 0,
+            peak_usage: 0,
+            active_allocations: 0,
+            allocation_breakdown: std::collections::HashMap::new(),
+        }
+    }
+    
+    pub async fn release_all(&mut self) -> Result<(), ResourceError> {
+        // Placeholder implementation
+        Ok(())
+    }
+}
+
 #[derive(Debug)]
 pub struct CleanupScheduler;
+
+impl CleanupScheduler {
+    pub async fn start(&mut self) -> Result<(), ResourceError> {
+        // Placeholder implementation
+        Ok(())
+    }
+    
+    pub async fn force_cleanup(&mut self) -> Result<(), ResourceError> {
+        // Placeholder implementation
+        Ok(())
+    }
+    
+    pub async fn get_stats(&self) -> crate::app::performance_management::CleanupStats {
+        // Placeholder implementation
+        crate::app::performance_management::CleanupStats {
+            automatic_cleanups: 0,
+            forced_cleanups: 0,
+            bytes_cleaned: 0,
+            last_cleanup: None,
+        }
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct ResourcePolicies;
@@ -919,6 +1026,28 @@ pub struct CachePolicy;
 
 #[derive(Debug, Clone)]
 pub struct CacheMetrics;
+
+impl CacheMetrics {
+    pub async fn record_hit(&mut self, _cache_type: CacheType) {
+        // Placeholder implementation
+    }
+    
+    pub async fn record_miss(&mut self, _cache_type: CacheType) {
+        // Placeholder implementation
+    }
+    
+    pub async fn record_put(&mut self, _cache_type: CacheType) {
+        // Placeholder implementation
+    }
+    
+    pub async fn record_invalidation(&mut self, _cache_type: CacheType) {
+        // Placeholder implementation
+    }
+    
+    pub async fn record_clear(&mut self, _cache_type: CacheType) {
+        // Placeholder implementation
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct WarmingStrategy;

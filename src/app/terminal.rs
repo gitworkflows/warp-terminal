@@ -23,7 +23,8 @@ use crate::ui::settings::{
 use crate::ui::synchronization::CompactIndicatorStyle;
 use crate::ui::welcome::welcome_screen;
 use crate::handlers::BatchCommandHandler;
-use clipboard::{ClipboardContext, ClipboardProvider};
+// Using arboard as a maintained alternative to the clipboard crate
+use arboard::Clipboard;
 use iced::widget::container;
 use iced::widget::{button, column, row, scrollable, text};
 use iced::{executor, theme, Alignment, Application, Color, Command, Element, Length};
@@ -49,7 +50,7 @@ pub struct WarpTerminal {
     scroll_position: scrollable::Id,
     // theme_manager: warp_themes::ThemeManager,
     theme: AppTheme,
-    clipboard: ClipboardContext,
+    clipboard: Clipboard,
     show_settings: bool,
     settings_state: SettingsState,
     settings_errors: Vec<String>,
@@ -209,7 +210,7 @@ impl Application for WarpTerminal {
             executing_commands: HashMap::new(),
             scroll_position: scrollable::Id::unique(),
             theme: AppTheme::default(),
-            clipboard: ClipboardContext::new().unwrap(),
+            clipboard: Clipboard::new().unwrap(),
             show_settings: false,
             settings_state: initial_settings_state,
             settings_errors: Vec::new(),
@@ -640,25 +641,21 @@ impl Application for WarpTerminal {
 
             Message::CopyCommand(id) => {
                 if let Some(block) = self.block_manager.blocks().iter().find(|b| b.id == id) {
-                    self.clipboard
-                        .set_contents(block.get_command_text())
-                        .unwrap();
+                    let _ = self.clipboard.set_text(block.get_command_text());
                 }
                 Command::none()
             }
 
             Message::CopyOutput(id) => {
                 if let Some(block) = self.block_manager.blocks().iter().find(|b| b.id == id) {
-                    self.clipboard
-                        .set_contents(block.get_output_text())
-                        .unwrap();
+                    let _ = self.clipboard.set_text(block.get_output_text());
                 }
                 Command::none()
             }
 
             Message::CopyBoth(id) => {
                 if let Some(block) = self.block_manager.blocks().iter().find(|b| b.id == id) {
-                    self.clipboard.set_contents(block.get_both_text()).unwrap();
+                    let _ = self.clipboard.set_text(block.get_both_text());
                 }
                 Command::none()
             }
@@ -669,7 +666,7 @@ impl Application for WarpTerminal {
                         "Check out this command I ran in Warp:\n\n```\n{}\n```",
                         block.get_both_text()
                     );
-                    self.clipboard.set_contents(share_text).unwrap();
+                    let _ = self.clipboard.set_text(share_text);
                 }
                 Command::none()
             }

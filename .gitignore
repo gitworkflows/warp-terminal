@@ -127,9 +127,3 @@ Cargo.local.toml
 local.toml
 override.toml
 # Large theme background images - should be stored with Git LFS or external CDN
-themes/**/*.jpg
-themes/**/*.png
-themes/**/*.jpeg
-*.jpg
-*.png
-*.jpeg

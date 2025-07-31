@@ -27,7 +27,7 @@ impl super::core_architecture::PerformanceMonitor {
             metrics: super::core_architecture::PerformanceMetrics::new(),
             history: Vec::new(),
             optimizations: Vec::new(),
-            resource_tracker: ResourceTracker::new(),
+            resource_tracker: super::core_architecture::ResourceTracker,
         }
     }
     
@@ -85,7 +85,7 @@ impl super::core_architecture::PerformanceMonitor {
             timestamp: SystemTime::now(),
             metrics: self.metrics.clone(),
             resource_usage: self.resource_tracker.get_current_usage().await,
-            active_optimizations: self.optimizations.clone(),
+            active_optimizations: vec![], // Convert to core architecture type
         }
     }
     
@@ -136,9 +136,9 @@ impl super::core_architecture::ResourceManager {
     /// Create a new resource manager
     pub fn new() -> Self {
         Self {
-            memory_tracker: MemoryTracker::new(),
-            cleanup_scheduler: CleanupScheduler::new(),
-            resource_policies: ResourcePolicies::default(),
+            memory_tracker: super::core_architecture::MemoryTracker,
+            cleanup_scheduler: super::core_architecture::CleanupScheduler,
+            resource_policies: super::core_architecture::ResourcePolicies,
             gc_hints: Vec::new(),
         }
     }
@@ -201,7 +201,7 @@ impl super::core_architecture::ResourceManager {
             memory: self.memory_tracker.get_usage_summary().await,
             cleanup_stats: self.cleanup_scheduler.get_stats().await,
             policy_violations: self.get_policy_violations().await,
-            gc_recommendations: self.gc_hints.clone(),
+            gc_recommendations: vec![], // Convert to performance_management GCHints
         }
     }
     
@@ -220,7 +220,7 @@ impl super::core_architecture::ResourceManager {
     }
     
     /// Add garbage collection hint
-    pub fn add_gc_hint(&mut self, hint: GCHint) {
+    pub fn add_gc_hint(&mut self, hint: super::core_architecture::GCHint) {
         debug!("Adding GC hint: {:?}", hint);
         self.gc_hints.push(hint);
         
@@ -259,8 +259,8 @@ impl super::core_architecture::CacheManager {
     pub fn new() -> Self {
         Self {
             caches: HashMap::new(),
-            policies: CachePolicy::default(),
-            metrics: CacheMetrics::new(),
+            policies: super::core_architecture::CachePolicy,
+            metrics: super::core_architecture::CacheMetrics,
             warming_strategies: Vec::new(),
         }
     }
@@ -283,14 +283,17 @@ impl super::core_architecture::CacheManager {
     }
     
     /// Get item from cache
-    pub async fn get<T>(&mut self, cache_type: CacheType, key: &str) -> Option<T>
+    pub async fn get<T>(&mut self, cache_type: super::core_architecture::CacheType, key: &str) -> Option<T>
     where
         T: Clone + Send + Sync + 'static,
     {
         if let Some(cache) = self.caches.get_mut(&cache_type) {
-            if let Some(value) = cache.get(key).await {
+            if let Some(value_box) = cache.get(key).await {
                 self.metrics.record_hit(cache_type.clone()).await;
-                return Some(value);
+                // Attempt to downcast the Any to T
+                if let Ok(value) = value_box.downcast::<T>() {
+                    return Some(*value);
+                }
             }
         }
         
@@ -299,19 +302,19 @@ impl super::core_architecture::CacheManager {
     }
     
     /// Put item in cache
-    pub async fn put<T>(&mut self, cache_type: CacheType, key: String, value: T) -> Result<(), CacheError>
+    pub async fn put<T>(&mut self, cache_type: super::core_architecture::CacheType, key: String, value: T) -> Result<(), CacheError>
     where
         T: Clone + Send + Sync + 'static,
     {
         if let Some(cache) = self.caches.get_mut(&cache_type) {
-            cache.put(key, value).await?;
+            cache.put(key, Box::new(value)).await?;
             self.metrics.record_put(cache_type).await;
         }
         Ok(())
     }
     
     /// Invalidate cache entry
-    pub async fn invalidate(&mut self, cache_type: CacheType, key: &str) -> Result<(), CacheError> {
+    pub async fn invalidate(&mut self, cache_type: super::core_architecture::CacheType, key: &str) -> Result<(), CacheError> {
         if let Some(cache) = self.caches.get_mut(&cache_type) {
             cache.invalidate(key).await?;
             self.metrics.record_invalidation(cache_type).await;
@@ -320,7 +323,7 @@ impl super::core_architecture::CacheManager {
     }
     
     /// Clear entire cache
-    pub async fn clear(&mut self, cache_type: CacheType) -> Result<(), CacheError> {
+    pub async fn clear(&mut self, cache_type: super::core_architecture::CacheType) -> Result<(), CacheError> {
         if let Some(cache) = self.caches.get_mut(&cache_type) {
             cache.clear().await?;
             self.metrics.record_clear(cache_type).await;
@@ -331,7 +334,7 @@ impl super::core_architecture::CacheManager {
     /// Get cache statistics
     pub async fn get_stats(&self) -> CacheStats {
         CacheStats {
-            metrics: self.metrics.clone(),
+            metrics: CacheMetrics::new(), // Use local type
             cache_sizes: self.get_cache_sizes().await,
             hit_rates: self.calculate_hit_rates().await,
         }
@@ -343,13 +346,13 @@ impl super::core_architecture::CacheManager {
         debug!("Creating cache layers");
         
         // L1 Cache - In-memory, fast access
-        self.caches.insert(CacheType::L1Memory, Box::new(L1MemoryCache::new()));
+        self.caches.insert(super::core_architecture::CacheType::L1Memory, Box::new(L1MemoryCache::new()));
         
         // L2 Cache - Larger, still in-memory
-        self.caches.insert(CacheType::L2Extended, Box::new(L2ExtendedCache::new()));
+        self.caches.insert(super::core_architecture::CacheType::L2Extended, Box::new(L2ExtendedCache::new()));
         
         // Persistent Cache - Disk-backed
-        self.caches.insert(CacheType::Persistent, Box::new(PersistentCache::new()));
+        self.caches.insert(super::core_architecture::CacheType::Persistent, Box::new(PersistentCache::new()));
         
         Ok(())
     }
@@ -588,14 +591,7 @@ impl CleanupScheduler {
     }
 }
 
-// Cache implementations
-trait Cache: Send + Sync {
-    async fn get(&mut self, key: &str) -> Option<Box<dyn std::any::Any + Send + Sync>>;
-    async fn put(&mut self, key: String, value: Box<dyn std::any::Any + Send + Sync>) -> Result<(), CacheError>;
-    async fn invalidate(&mut self, key: &str) -> Result<(), CacheError>;
-    async fn clear(&mut self) -> Result<(), CacheError>;
-    async fn size(&self) -> usize;
-}
+// Use the cache trait from core architecture
 
 struct L1MemoryCache {
     data: HashMap<String, (Box<dyn std::any::Any + Send + Sync>, Instant)>,
@@ -612,7 +608,7 @@ impl L1MemoryCache {
 }
 
 #[async_trait::async_trait]
-impl Cache for L1MemoryCache {
+impl super::core_architecture::Cache for L1MemoryCache {
     async fn get(&mut self, key: &str) -> Option<Box<dyn std::any::Any + Send + Sync>> {
         // Implement with TTL check
         None
@@ -649,7 +645,7 @@ impl L2ExtendedCache {
 }
 
 #[async_trait::async_trait]
-impl Cache for L2ExtendedCache {
+impl super::core_architecture::Cache for L2ExtendedCache {
     async fn get(&mut self, _key: &str) -> Option<Box<dyn std::any::Any + Send + Sync>> {
         None
     }
@@ -682,7 +678,7 @@ impl PersistentCache {
 }
 
 #[async_trait::async_trait]
-impl Cache for PersistentCache {
+impl super::core_architecture::Cache for PersistentCache {
     async fn get(&mut self, _key: &str) -> Option<Box<dyn std::any::Any + Send + Sync>> {
         None
     }

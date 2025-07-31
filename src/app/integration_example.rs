@@ -9,7 +9,8 @@ use crate::app::core_architecture::{
     PanelType, InputMode, InteractionType,
 };
 use crate::app::plugin_system::{
-    Plugin, PluginInfo, PluginCapability, PluginCategory, PluginPermission
+    Plugin, PluginInfo, PluginCapability, PluginCategory, PluginPermission,
+    TerminalEvent as PluginTerminalEvent, PluginMessage, PluginHealth
 };
 use crate::app::performance_management::{
     PerformanceMetric, OptimizationSuggestion, CacheType
@@ -209,7 +210,7 @@ impl IntegratedTerminalExample {
         };
         
         // Record the metric  
-        let perf_message = EnhancedMessage::Performance(PerformanceMessage);
+let perf_message = EnhancedMessage::Performance(super::core_architecture::PerformanceMessage::GetMetrics);
         self.enhanced_terminal.process_message(perf_message).await?;
         
         // Open performance monitor panel
@@ -231,11 +232,11 @@ impl IntegratedTerminalExample {
         self.integration_state.demonstration_mode = DemonstrationMode::PluginDevelopment;
         
         // Load the example plugin
-        if let Some(plugin) = &self.example_plugin {
+        if let Some(plugin) = &mut self.example_plugin {
             info!("Example plugin info: {:?}", plugin.info());
             
             // Simulate plugin event handling
-            let test_event = TerminalEvent::CommandStarted(Uuid::new_v4(), "test command".to_string());
+            let test_event = PluginTerminalEvent::CommandStarted(Uuid::new_v4(), "test command".to_string());
             if let Ok(Some(response)) = plugin.handle_event(&test_event).await {
                 debug!("Plugin responded with: {:?}", response);
             }
@@ -413,22 +414,22 @@ impl Plugin for ExamplePlugin {
         Ok(())
     }
     
-    async fn handle_event(&mut self, event: &TerminalEvent) -> Result<Option<EnhancedMessage>, crate::app::core_architecture::PluginError> {
+    async fn handle_event(&mut self, event: &PluginTerminalEvent) -> Result<Option<crate::app::core_architecture::EnhancedMessage>, crate::app::core_architecture::PluginError> {
         self.state.handled_events += 1;
         
         match event {
-            TerminalEvent::CommandStarted(_, command) => {
+            PluginTerminalEvent::CommandStarted(_, command) => {
                 debug!("Example plugin handling command: {}", command);
                 self.state.last_command = Some(command.clone());
                 
                 // Could return a message to modify the command or provide suggestions
                 if command.starts_with("git") {
-                    return Ok(Some(EnhancedMessage::InputEnhanced(
+                    return Ok(Some(crate::app::core_architecture::EnhancedMessage::InputEnhanced(
                         InputMessage::TextChanged(format!("{} --help", command))
                     )));
                 }
             }
-            TerminalEvent::InputChanged(input) => {
+            PluginTerminalEvent::InputChanged(input) => {
                 debug!("Example plugin seeing input change: {}", input);
                 
                 // Could provide real-time suggestions
@@ -444,14 +445,14 @@ impl Plugin for ExamplePlugin {
         Ok(None)
     }
     
-    async fn handle_message(&mut self, message: crate::app::plugin_system::PluginMessage) -> Result<Option<EnhancedMessage>, crate::app::core_architecture::PluginError> {
+    async fn handle_message(&mut self, message: PluginMessage) -> Result<Option<crate::app::core_architecture::EnhancedMessage>, crate::app::core_architecture::PluginError> {
         debug!("Example plugin handling message: {:?}", message);
         
         match message {
-            crate::app::plugin_system::PluginMessage::ConfigUpdate(config) => {
+            PluginMessage::ConfigUpdate(config) => {
                 info!("Example plugin config updated: {}", config);
             }
-            crate::app::plugin_system::PluginMessage::Custom(data) => {
+            PluginMessage::Custom(data) => {
                 debug!("Example plugin received custom data: {}", data);
             }
             _ => {}
@@ -495,13 +496,13 @@ impl Plugin for ExamplePlugin {
         Ok(())
     }
     
-    async fn health_check(&self) -> crate::app::plugin_system::PluginHealth {
+    async fn health_check(&self) -> PluginHealth {
         if !self.state.initialized {
-            crate::app::plugin_system::PluginHealth::Warning("Plugin not initialized".to_string())
+            PluginHealth::Warning("Plugin not initialized".to_string())
         } else if self.state.handled_events > 10000 {
-            crate::app::plugin_system::PluginHealth::Warning("High event count, consider restart".to_string())
+            PluginHealth::Warning("High event count, consider restart".to_string())
         } else {
-            crate::app::plugin_system::PluginHealth::Healthy
+            PluginHealth::Healthy
         }
     }
 }
@@ -549,63 +550,63 @@ mod tests {
 
 // Placeholder implementations to satisfy compilation
 impl super::core_architecture::EnhancedWarpTerminal {
-    async fn save_session_state(&self) -> Result<(), super::core_architecture::TerminalError> {
+    pub async fn save_session_state(&self) -> Result<(), super::core_architecture::TerminalError> {
         Ok(())
     }
     
-    async fn process_base_message(&mut self, _msg: crate::Message) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
+    pub async fn process_base_message(&mut self, _msg: crate::Message) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
         Ok(iced::Command::none())
     }
     
-    async fn process_input_message(&mut self, _msg: super::core_architecture::InputMessage) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
+    pub async fn process_input_message(&mut self, _msg: super::core_architecture::InputMessage) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
         Ok(iced::Command::none())
     }
     
-    async fn process_block_message(&mut self, _msg: super::core_architecture::BlockMessage) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
+    pub async fn process_block_message(&mut self, _msg: super::core_architecture::BlockMessage) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
         Ok(iced::Command::none())
     }
     
-    async fn process_event(&mut self, _event: super::core_architecture::TerminalEvent) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
+    pub async fn process_event(&mut self, _event: super::core_architecture::TerminalEvent) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
         Ok(iced::Command::none())
     }
     
-    async fn process_plugin_message(&mut self, _msg: super::core_architecture::PluginMessage) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
+    pub async fn process_plugin_message(&mut self, _msg: super::core_architecture::PluginMessage) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
         Ok(iced::Command::none())
     }
     
-    async fn process_performance_message(&mut self, _msg: super::core_architecture::PerformanceMessage) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
+    pub async fn process_performance_message(&mut self, _msg: super::core_architecture::PerformanceMessage) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
         Ok(iced::Command::none())
     }
     
-    async fn process_resource_message(&mut self, _msg: super::core_architecture::ResourceMessage) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
+    pub async fn process_resource_message(&mut self, _msg: super::core_architecture::ResourceMessage) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
         Ok(iced::Command::none())
     }
     
-    async fn process_cache_message(&mut self, _msg: super::core_architecture::CacheMessage) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
+    pub async fn process_cache_message(&mut self, _msg: super::core_architecture::CacheMessage) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
         Ok(iced::Command::none())
     }
     
-    async fn process_session_message(&mut self, _msg: super::core_architecture::SessionMessage) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
+    pub async fn process_session_message(&mut self, _msg: super::core_architecture::SessionMessage) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
         Ok(iced::Command::none())
     }
     
-    async fn process_error_message(&mut self, _msg: super::core_architecture::ErrorMessage) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
+    pub async fn process_error_message(&mut self, _msg: super::core_architecture::ErrorMessage) -> Result<iced::Command<super::core_architecture::EnhancedMessage>, super::core_architecture::TerminalError> {
         Ok(iced::Command::none())
     }
     
-    async fn build_main_content(&self, _state: &super::core_architecture::TerminalState) -> iced::Element<super::core_architecture::EnhancedMessage> {
+    pub async fn build_main_content(&self, _state: &super::core_architecture::TerminalState) -> iced::Element<super::core_architecture::EnhancedMessage> {
         iced::widget::text("Enhanced Terminal Main Content").into()
     }
     
-    async fn build_panels(&self, _state: &super::core_architecture::TerminalState) -> iced::Element<super::core_architecture::EnhancedMessage> {
+    pub async fn build_panels(&self, _state: &super::core_architecture::TerminalState) -> iced::Element<super::core_architecture::EnhancedMessage> {
         iced::widget::text("Enhanced Terminal Panels").into()
     }
     
-    async fn build_overlays(&self, _state: &super::core_architecture::TerminalState) -> iced::Element<super::core_architecture::EnhancedMessage> {
+    pub async fn build_overlays(&self, _state: &super::core_architecture::TerminalState) -> iced::Element<super::core_architecture::EnhancedMessage> {
         iced::widget::text("Enhanced Terminal Overlays").into()
     }
     
-    fn optimize_layout(&self, main: iced::Element<super::core_architecture::EnhancedMessage>, panels: iced::Element<super::core_architecture::EnhancedMessage>, overlays: iced::Element<super::core_architecture::EnhancedMessage>) -> iced::Element<super::core_architecture::EnhancedMessage> {
+    pub fn optimize_layout<'a>(&self, main: iced::Element<'a, super::core_architecture::EnhancedMessage>, panels: iced::Element<'a, super::core_architecture::EnhancedMessage>, overlays: iced::Element<'a, super::core_architecture::EnhancedMessage>) -> iced::Element<'a, super::core_architecture::EnhancedMessage> {
         iced::widget::column![main, panels, overlays].into()
     }
 }
@@ -618,7 +619,7 @@ impl super::core_architecture::EventProcessor {
             event_receiver: std::sync::Arc::new(tokio::sync::RwLock::new(tokio::sync::mpsc::unbounded_channel().1)),
             handlers: std::collections::HashMap::new(),
             event_history: Vec::new(),
-            processing_metrics: ProcessingMetrics,
+            processing_metrics: super::core_architecture::ProcessingMetrics,
         })
     }
     
@@ -631,8 +632,6 @@ impl super::core_architecture::EventProcessor {
     }
 }
 
-#[derive(Debug)]
-pub struct ProcessingMetrics;
 
 #[derive(Debug)]
 pub struct EventRecord;

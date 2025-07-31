@@ -285,9 +285,17 @@ impl Block {
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Clone)]
 pub struct BlockManager {
     blocks: Vec<Block>,
+}
+
+impl Default for BlockManager {
+    fn default() -> Self {
+        Self {
+            blocks: Vec::new(),
+        }
+    }
 }
 
 impl BlockManager {

@@ -21,8 +21,9 @@ dirs = "4.0"
 walkdir = "2.0"
 
 # GUI
-iced = { version = "0.12", features = ["canvas", "tokio"] }
-iced_core = "0.12"
+# Using the latest version of iced to resolve multiple dependency issues
+iced = { version = "0.12.1", features = ["canvas", "tokio"] }
+iced_core = "0.12.1"
 
 [package]
 name = "warp-terminal"
@@ -48,6 +49,11 @@ dirs.workspace = true
 warp-workflows-types = { path = "workflows/workflow-types" }
 
 # Additional dependencies specific to our terminal
+# Using arboard as a maintained alternative to the clipboard crate
+arboard = "3.3.0"
+
+# Explicitly update xcb to a secure version
+xcb = { version = "1.3.0", features = ["randr"] }
 fuzzy-matcher = "0.3"
 toml = "0.8"
 uuid = { version = "1", features = ["v4", "serde"] }
