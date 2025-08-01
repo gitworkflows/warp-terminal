@@ -127,3 +127,23 @@ Cargo.local.toml
 local.toml
 override.toml
 # Large theme background images - should be stored with Git LFS or external CDN
+
+# Go build artifacts (for warp-server)
+warp-server/vendor/
+warp-server/*.exe
+warp-server/*.dll
+warp-server/*.so
+warp-server/*.dylib
+warp-server/*.test
+warp-server/*.out
+warp-server/bin/
+warp-server/pkg/
+go.work
+go.work.sum
+
+# Go module downloads
+/go/
+
+# Compiled Go binaries
+warp-server/warp-server
+warp-server/warp-server.exe

@@ -1,0 +1,43 @@
+# Node & Go
+node_modules
+dist/
+*.log
+/build/
+/cache/
+*.env
+
+# macOS
+.DS_Store
+
+# Go
+/vendor/
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Logs and Environment
+*.log
+*.env
+
+# Go workspace
+/.idea/
+*.iml
+*.sublime-workspace
+*.sublime-project
+*.vscode/
+
+# Dependency directories
+/bin/
+/pkg/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Specific to warp-server
+/warp-server/config
+
