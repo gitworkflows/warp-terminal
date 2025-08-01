@@ -4,24 +4,24 @@
 //! components together to create a powerful, extensible terminal experience.
 
 use crate::app::core_architecture::{
-    EnhancedWarpTerminal, EnhancedMessage, TerminalEvent, TerminalState,
-    InputMessage, BlockMessage, PerformanceMessage, 
-    PanelType, InputMode, InteractionType,
+    EnhancedWarpTerminal, EnhancedMessage, TerminalEvent,
+    InputMessage, BlockMessage, 
+    PanelType, InputMode,
 };
 use crate::app::plugin_system::{
     Plugin, PluginInfo, PluginCapability, PluginCategory, PluginPermission,
     TerminalEvent as PluginTerminalEvent, PluginMessage, PluginHealth
 };
 use crate::app::performance_management::{
-    PerformanceMetric, OptimizationSuggestion, CacheType
+    PerformanceMetric
 };
 use crate::model::block::BlockContent;
 
-use iced::{executor, Application, Command, Element, Settings, Theme};
+use iced::{Element};
 use serde_json::json;
 use std::collections::HashMap;
 use std::time::SystemTime;
-use tracing::{info, debug, error};
+use tracing::{info, debug};
 use uuid::Uuid;
 
 /// Example integration showing the enhanced terminal in action
@@ -109,11 +109,11 @@ impl IntegratedTerminalExample {
         
         // Process some basic input
         let input_message = EnhancedMessage::InputEnhanced(InputMessage::TextChanged("ls -la".to_string()));
-        self.enhanced_terminal.process_message(input_message).await?;
+        let _ = self.enhanced_terminal.process_message(input_message).await?;
         
         // Execute the command
         let execute_message = EnhancedMessage::InputEnhanced(InputMessage::ValidationRequested);
-        self.enhanced_terminal.process_message(execute_message).await?;
+        let _ = self.enhanced_terminal.process_message(execute_message).await?;
         
         // Demonstrate block creation
         let block_message = EnhancedMessage::BlockManager(BlockMessage::Create(
@@ -122,7 +122,7 @@ impl IntegratedTerminalExample {
                 output: "Enhanced terminal output here...".to_string(),
             }
         ));
-        self.enhanced_terminal.process_message(block_message).await?;
+        let _ = self.enhanced_terminal.process_message(block_message).await?;
         
         info!("Basic usage demonstration completed");
         Ok(())
@@ -154,15 +154,15 @@ impl IntegratedTerminalExample {
         // Open command palette
         let palette_event = TerminalEvent::PanelToggled(PanelType::CommandPalette);
         let event_message = EnhancedMessage::Event(palette_event);
-        self.enhanced_terminal.process_message(event_message).await?;
+        let _ = self.enhanced_terminal.process_message(event_message).await?;
         
         // Simulate search
         let search_message = EnhancedMessage::InputEnhanced(InputMessage::TextChanged("git st".to_string()));
-        self.enhanced_terminal.process_message(search_message).await?;
+        let _ = self.enhanced_terminal.process_message(search_message).await?;
         
         // Simulate selection
         let select_message = EnhancedMessage::InputEnhanced(InputMessage::SuggestionAccepted(0));
-        self.enhanced_terminal.process_message(select_message).await?;
+        let _ = self.enhanced_terminal.process_message(select_message).await?;
         
         Ok(())
     }
@@ -174,15 +174,15 @@ impl IntegratedTerminalExample {
         // Open history panel
         let history_event = TerminalEvent::PanelToggled(PanelType::CommandHistory);
         let event_message = EnhancedMessage::Event(history_event);
-        self.enhanced_terminal.process_message(event_message).await?;
+        let _ = self.enhanced_terminal.process_message(event_message).await?;
         
         // Demonstrate history search
         let history_search = EnhancedMessage::InputEnhanced(InputMessage::TextChanged("docker".to_string()));
-        self.enhanced_terminal.process_message(history_search).await?;
+        let _ = self.enhanced_terminal.process_message(history_search).await?;
         
         // Change input mode to history search
         let mode_change = EnhancedMessage::InputEnhanced(InputMessage::ModeChanged(InputMode::HistorySearch));
-        self.enhanced_terminal.process_message(mode_change).await?;
+        let _ = self.enhanced_terminal.process_message(mode_change).await?;
         
         Ok(())
     }
@@ -196,7 +196,7 @@ impl IntegratedTerminalExample {
         }
         
         // Create a performance metric
-        let metric = PerformanceMetric {
+        let _metric = PerformanceMetric {
             name: "command_execution_time".to_string(),
             value: 150.0,
             unit: "ms".to_string(),
@@ -211,12 +211,12 @@ impl IntegratedTerminalExample {
         
         // Record the metric  
 let perf_message = EnhancedMessage::Performance(super::core_architecture::PerformanceMessage::GetMetrics);
-        self.enhanced_terminal.process_message(perf_message).await?;
+        let _ = self.enhanced_terminal.process_message(perf_message).await?;
         
         // Open performance monitor panel
         let perf_event = TerminalEvent::PanelToggled(PanelType::PerformanceMonitor);
         let event_message = EnhancedMessage::Event(perf_event);
-        self.enhanced_terminal.process_message(event_message).await?;
+        let _ = self.enhanced_terminal.process_message(event_message).await?;
         
         Ok(())
     }
@@ -245,7 +245,7 @@ let perf_message = EnhancedMessage::Performance(super::core_architecture::Perfor
         // Open plugin manager panel
         let plugin_event = TerminalEvent::PanelToggled(PanelType::PluginManager);
         let event_message = EnhancedMessage::Event(plugin_event);
-        self.enhanced_terminal.process_message(event_message).await?;
+        let _ = self.enhanced_terminal.process_message(event_message).await?;
         
         info!("Plugin system demonstration completed");
         Ok(())
@@ -268,7 +268,7 @@ let perf_message = EnhancedMessage::Performance(super::core_architecture::Perfor
         
         for event in events {
             let event_message = EnhancedMessage::Event(event);
-            self.enhanced_terminal.process_message(event_message).await?;
+            let _ = self.enhanced_terminal.process_message(event_message).await?;
         }
         
         info!("Event-driven architecture demonstration completed");

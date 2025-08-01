@@ -102,18 +102,18 @@ impl KeybindingManager {
         );
 
         // Selection
-        self.add_keybinding(
+self.add_keybinding(
             Key::Character("a".into()),
             Modifiers::CTRL,
-            EditorAction::SelectAll,
+            EditorAction::SELECT_ALL,
             "Select all text".to_string(),
         );
 
         // Copy/Cut/Paste would be handled by the system, but we can add custom actions
-        self.add_keybinding(
+self.add_keybinding(
             Key::Character("x".into()),
             Modifiers::CTRL,
-            EditorAction::Cut,
+            EditorAction::CUT,
             "Cut selected text".to_string(),
         );
 
@@ -132,31 +132,31 @@ impl KeybindingManager {
         );
 
         // Navigation
-        self.add_keybinding(
+self.add_keybinding(
             Key::Named(Named::Home),
             Modifiers::empty(),
-            EditorAction::MoveToLineStart,
+            EditorAction::MOVE_TO_LINE_START,
             "Move cursor to beginning of line".to_string(),
         );
 
-        self.add_keybinding(
+self.add_keybinding(
             Key::Named(Named::End),
             Modifiers::empty(),
-            EditorAction::MoveToLineEnd,
+            EditorAction::MOVE_TO_LINE_END,
             "Move cursor to end of line".to_string(),
         );
 
-        self.add_keybinding(
+self.add_keybinding(
             Key::Named(Named::Home),
             Modifiers::CTRL,
-            EditorAction::MoveToDocumentStart,
+            EditorAction::MOVE_TO_DOCUMENT_START,
             "Move cursor to beginning of document".to_string(),
         );
 
-        self.add_keybinding(
+self.add_keybinding(
             Key::Named(Named::End),
             Modifiers::CTRL,
-            EditorAction::MoveToDocumentEnd,
+            EditorAction::MOVE_TO_DOCUMENT_END,
             "Move cursor to end of document".to_string(),
         );
 
@@ -168,32 +168,32 @@ impl KeybindingManager {
             "Insert new line".to_string(),
         );
 
-        self.add_keybinding(
+self.add_keybinding(
             Key::Character("d".into()),
             Modifiers::CTRL,
-            EditorAction::DuplicateCurrentLine,
+            EditorAction::DUPLICATE_CURRENT_LINE,
             "Duplicate current line".to_string(),
         );
 
-        self.add_keybinding(
+self.add_keybinding(
             Key::Character("k".into()),
             Modifiers::CTRL,
-            EditorAction::DeleteCurrentLine,
+            EditorAction::DELETE_CURRENT_LINE,
             "Delete current line".to_string(),
         );
 
         // Indentation
-        self.add_keybinding(
+self.add_keybinding(
             Key::Named(Named::Tab),
             Modifiers::empty(),
-            EditorAction::IndentSelection,
+            EditorAction::INDENT_SELECTION,
             "Indent selected text".to_string(),
         );
 
-        self.add_keybinding(
+self.add_keybinding(
             Key::Named(Named::Tab),
             Modifiers::SHIFT,
-            EditorAction::UnindentSelection,
+            EditorAction::UNINDENT_SELECTION,
             "Unindent selected text".to_string(),
         );
 
@@ -212,100 +212,100 @@ impl KeybindingManager {
             "Show find and replace dialog".to_string(),
         );
 
-        self.add_keybinding(
+self.add_keybinding(
             Key::Character("g".into()),
             Modifiers::CTRL,
-            EditorAction::GoToLine,
+            EditorAction::GO_TO_LINE,
             "Go to specific line".to_string(),
         );
 
         // Multiple cursors
-        self.add_keybinding(
+self.add_keybinding(
             Key::Character("d".into()),
             Modifiers::ALT,
-            EditorAction::AddCursorBelow,
+            EditorAction::ADD_CURSOR_BELOW,
             "Add cursor on line below".to_string(),
         );
 
-        self.add_keybinding(
+self.add_keybinding(
             Key::Character("u".into()),
             Modifiers::ALT,
-            EditorAction::AddCursorAbove,
+            EditorAction::ADD_CURSOR_ABOVE,
             "Add cursor on line above".to_string(),
         );
 
         // Word operations
-        self.add_keybinding(
+self.add_keybinding(
             Key::Named(Named::ArrowLeft),
             Modifiers::CTRL,
-            EditorAction::MoveToPreviousWord,
+            EditorAction::MOVE_TO_PREVIOUS_WORD,
             "Move to previous word".to_string(),
         );
 
-        self.add_keybinding(
+self.add_keybinding(
             Key::Named(Named::ArrowRight),
             Modifiers::CTRL,
-            EditorAction::MoveToNextWord,
+            EditorAction::MOVE_TO_NEXT_WORD,
             "Move to next word".to_string(),
         );
 
-        self.add_keybinding(
+self.add_keybinding(
             Key::Named(Named::Backspace),
             Modifiers::CTRL,
-            EditorAction::DeletePreviousWord,
+            EditorAction::DELETE_PREVIOUS_WORD,
             "Delete previous word".to_string(),
         );
 
-        self.add_keybinding(
+self.add_keybinding(
             Key::Named(Named::Delete),
             Modifiers::CTRL,
-            EditorAction::DeleteNextWord,
+            EditorAction::DELETE_NEXT_WORD,
             "Delete next word".to_string(),
         );
 
         // Toggle features
-        self.add_keybinding(
+self.add_keybinding(
             Key::Character("/".into()),
             Modifiers::CTRL,
-            EditorAction::ToggleComment,
+            EditorAction::TOGGLE_COMMENT,
             "Toggle line comment".to_string(),
         );
 
-        self.add_keybinding(
+self.add_keybinding(
             Key::Character("l".into()),
             Modifiers::CTRL,
-            EditorAction::ToggleLineNumbers,
+            EditorAction::TOGGLE_LINE_NUMBERS,
             "Toggle line numbers".to_string(),
         );
 
         // Save (even though this might be handled elsewhere)
-        self.add_keybinding(
+self.add_keybinding(
             Key::Character("s".into()),
             Modifiers::CTRL,
-            EditorAction::Save,
+            EditorAction::SAVE,
             "Save current content".to_string(),
         );
 
         // Format
-        self.add_keybinding(
+self.add_keybinding(
             Key::Character("f".into()),
             Modifiers::ALT | Modifiers::SHIFT,
-            EditorAction::FormatDocument,
+            EditorAction::FORMAT_DOCUMENT,
             "Format entire document".to_string(),
         );
 
         // Folding
-        self.add_keybinding(
+self.add_keybinding(
             Key::Character("-".into()),
             Modifiers::CTRL,
-            EditorAction::FoldCurrentRegion,
+            EditorAction::FOLD_CURRENT_REGION,
             "Fold current region".to_string(),
         );
 
-        self.add_keybinding(
+self.add_keybinding(
             Key::Character("+".into()),
             Modifiers::CTRL,
-            EditorAction::UnfoldCurrentRegion,
+            EditorAction::UNFOLD_CURRENT_REGION,
             "Unfold current region".to_string(),
         );
     }
@@ -369,26 +369,26 @@ impl KeybindingManager {
 // Extended EditorAction enum to include additional actions for keybindings
 impl EditorAction {
     // Navigation actions
-    pub const MoveToLineStart: EditorAction = EditorAction::MoveCursor(0); // Will be handled specially
-    pub const MoveToLineEnd: EditorAction = EditorAction::MoveCursor(0); // Will be handled specially
-    pub const MoveToDocumentStart: EditorAction = EditorAction::MoveCursor(0);
-    pub const MoveToDocumentEnd: EditorAction = EditorAction::MoveCursor(usize::MAX);
+    pub const MOVE_TO_LINE_START: EditorAction = EditorAction::MoveCursor(0); // Will be handled specially
+    pub const MOVE_TO_LINE_END: EditorAction = EditorAction::MoveCursor(0); // Will be handled specially
+    pub const MOVE_TO_DOCUMENT_START: EditorAction = EditorAction::MoveCursor(0);
+    pub const MOVE_TO_DOCUMENT_END: EditorAction = EditorAction::MoveCursor(usize::MAX);
     
     // Line operations
-    pub const DuplicateCurrentLine: EditorAction = EditorAction::DuplicateLine(0);
-    pub const DeleteCurrentLine: EditorAction = EditorAction::DeleteLine(0);
+    pub const DUPLICATE_CURRENT_LINE: EditorAction = EditorAction::DuplicateLine(0);
+    pub const DELETE_CURRENT_LINE: EditorAction = EditorAction::DeleteLine(0);
     
     // Selection operations
-    pub const SelectAll: EditorAction = EditorAction::SetSelection(0, usize::MAX);
+    pub const SELECT_ALL: EditorAction = EditorAction::SetSelection(0, usize::MAX);
     
     // Clipboard operations (these would need to be handled by the UI layer)
-    pub const Cut: EditorAction = EditorAction::SaveSnapshot; // Placeholder
-    pub const Copy: EditorAction = EditorAction::SaveSnapshot; // Placeholder
-    pub const Paste: EditorAction = EditorAction::SaveSnapshot; // Placeholder
+    pub const CUT: EditorAction = EditorAction::SaveSnapshot; // Placeholder
+    pub const COPY: EditorAction = EditorAction::SaveSnapshot; // Placeholder
+    pub const PASTE: EditorAction = EditorAction::SaveSnapshot; // Placeholder
     
     // Indentation
-    pub const IndentSelection: EditorAction = EditorAction::AutoIndent;
-    pub const UnindentSelection: EditorAction = EditorAction::AutoIndent; // Will be handled specially
+    pub const INDENT_SELECTION: EditorAction = EditorAction::AutoIndent;
+    pub const UNINDENT_SELECTION: EditorAction = EditorAction::AutoIndent; // Will be handled specially
     
     // Search operations - using functions instead of constants since we need String::new()
     pub fn show_search() -> EditorAction {
@@ -398,29 +398,29 @@ impl EditorAction {
     pub fn show_replace() -> EditorAction {
         EditorAction::Replace(0, 0, String::new()) // Fixed arguments: start, length, replacement
     }
-    pub const GoToLine: EditorAction = EditorAction::MoveCursor(0);
+    pub const GO_TO_LINE: EditorAction = EditorAction::MoveCursor(0);
     
     // Multiple cursor operations
-    pub const AddCursorBelow: EditorAction = EditorAction::AddCursor(0);
-    pub const AddCursorAbove: EditorAction = EditorAction::AddCursor(0);
+    pub const ADD_CURSOR_BELOW: EditorAction = EditorAction::AddCursor(0);
+    pub const ADD_CURSOR_ABOVE: EditorAction = EditorAction::AddCursor(0);
     
     // Word operations
-    pub const MoveToPreviousWord: EditorAction = EditorAction::MoveCursor(0);
-    pub const MoveToNextWord: EditorAction = EditorAction::MoveCursor(0);
-    pub const DeletePreviousWord: EditorAction = EditorAction::Delete(0, 0);
-    pub const DeleteNextWord: EditorAction = EditorAction::Delete(0, 0);
+    pub const MOVE_TO_PREVIOUS_WORD: EditorAction = EditorAction::MoveCursor(0);
+    pub const MOVE_TO_NEXT_WORD: EditorAction = EditorAction::MoveCursor(0);
+    pub const DELETE_PREVIOUS_WORD: EditorAction = EditorAction::Delete(0, 0);
+    pub const DELETE_NEXT_WORD: EditorAction = EditorAction::Delete(0, 0);
     
     // Toggle operations
-    pub const ToggleComment: EditorAction = EditorAction::SaveSnapshot; // Placeholder
-    pub const ToggleLineNumbers: EditorAction = EditorAction::SaveSnapshot; // Placeholder
+    pub const TOGGLE_COMMENT: EditorAction = EditorAction::SaveSnapshot; // Placeholder
+    pub const TOGGLE_LINE_NUMBERS: EditorAction = EditorAction::SaveSnapshot; // Placeholder
     
     // File operations
-    pub const Save: EditorAction = EditorAction::SaveSnapshot;
-    pub const FormatDocument: EditorAction = EditorAction::SaveSnapshot; // Placeholder
+    pub const SAVE: EditorAction = EditorAction::SaveSnapshot;
+    pub const FORMAT_DOCUMENT: EditorAction = EditorAction::SaveSnapshot; // Placeholder
     
     // Folding operations
-    pub const FoldCurrentRegion: EditorAction = EditorAction::FoldRegion(0, 0);
-    pub const UnfoldCurrentRegion: EditorAction = EditorAction::UnfoldRegion(0, 0);
+    pub const FOLD_CURRENT_REGION: EditorAction = EditorAction::FoldRegion(0, 0);
+    pub const UNFOLD_CURRENT_REGION: EditorAction = EditorAction::UnfoldRegion(0, 0);
 }
 
 #[cfg(test)]

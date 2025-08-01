@@ -10,7 +10,10 @@
 
 use crate::executor::command_executor::ExecutionResult;
 use crate::model::block::{Block, BlockContent, BlockManager, BlockMetadata};
+#[cfg(feature = "sentry")]
 use crate::monitoring::{sentry, track_event, report_critical_error};
+#[cfg(not(feature = "sentry"))]
+use crate::monitoring::{report_critical_error};
 
 use iced::{Command, Element};
 use serde::{Deserialize, Serialize};
@@ -417,6 +420,7 @@ impl EnhancedWarpTerminal {
     pub async fn new() -> Result<Self, TerminalError> {
         info!("Initializing Enhanced Warp Terminal");
         
+        #[cfg(feature = "sentry")]
         // Track terminal initialization
         if let Some(sentry) = sentry() {
             sentry.add_breadcrumb("Terminal initialization started", "terminal.lifecycle", sentry::Level::Info);
@@ -446,6 +450,7 @@ impl EnhancedWarpTerminal {
         let resource_manager = ResourceManager::new();
         let cache_manager = CacheManager::new();
         
+        #[cfg(feature = "sentry")]
         // Report successful initialization
         if let Some(sentry) = sentry() {
             sentry.add_breadcrumb("Terminal initialization completed", "terminal.lifecycle", sentry::Level::Info);

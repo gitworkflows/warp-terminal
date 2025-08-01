@@ -307,6 +307,7 @@ pub enum PluginLifecycleEvent {
 
 /// Plugin security manager
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct PluginSecurityManager {
     /// Granted permissions per plugin
     granted_permissions: HashMap<String, Vec<PluginPermission>>,
@@ -320,6 +321,7 @@ pub struct PluginSecurityManager {
 
 /// Security policies configuration
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct SecurityPolicies {
     /// Allow plugins to execute system commands
     allow_command_execution: bool,
@@ -587,12 +589,14 @@ impl PluginAdapter {
         Self { plugin }
     }
     
+    #[allow(dead_code)]
     fn convert_event(&self, _event: &super::core_architecture::TerminalEvent) -> TerminalEvent {
         // Convert core architecture event to plugin system event
         // This is a placeholder implementation
         TerminalEvent::CommandStarted(uuid::Uuid::new_v4(), "placeholder".to_string())
     }
     
+    #[allow(dead_code)]
     fn convert_response(&self, _response: CoreEnhancedMessage) -> super::core_architecture::EnhancedMessage {
         // Convert plugin response to enhanced message
         // This is a placeholder implementation

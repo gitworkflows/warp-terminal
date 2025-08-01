@@ -607,7 +607,7 @@ impl L1MemoryCache {
 
 #[async_trait::async_trait]
 impl super::core_architecture::Cache for L1MemoryCache {
-    async fn get(&mut self, key: &str) -> Option<Box<dyn std::any::Any + Send + Sync>> {
+    async fn get(&mut self, _key: &str) -> Option<Box<dyn std::any::Any + Send + Sync>> {
         // Implement with TTL check
         None
     }

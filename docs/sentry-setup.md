@@ -20,10 +20,39 @@ Set the following environment variables to enable Sentry:
 
 ```bash
 # Required: Your Sentry DSN (Data Source Name)
-export SENTRY_DSN="https://your-dsn@sentry.io/project-id"
+export SENTRY_DSN="https://2c4bb2382fa2f89065882214bd82060e@o4507943605305344.ingest.de.sentry.io/4509765617451088"
 
 # Optional: Environment name (defaults to "development")
 export SENTRY_ENVIRONMENT="production"  # or "staging", "development"
+```
+
+### SDK Configuration
+
+The Sentry SDK is configured with the following default options:
+
+- **Release Tracking**: Automatically set using `release_name!()` macro
+- **PII Collection**: Enabled by default (captures IPs, etc.)
+- **Sample Rates**: 
+  - Error events: 100% (configurable via `sample_rate`)
+  - Performance traces: 10% (configurable via `traces_sample_rate`)
+- **Debug Mode**: Enabled in debug builds
+
+### Customizing Configuration
+
+You can customize the Sentry configuration by creating a `SentryConfig` instance:
+
+```rust
+use warp_terminal::monitoring::SentryConfig;
+
+let config = SentryConfig {
+    dsn: Some(std::env::var("SENTRY_DSN").ok()),
+    environment: "production".to_string(),
+    release: format!("warp-terminal@{}", env!("CARGO_PKG_VERSION")),
+    traces_sample_rate: 0.1,  // 10% of transactions
+    sample_rate: 1.0,        // 100% of errors
+    debug: cfg!(debug_assertions),
+    tags: std::collections::HashMap::new(),
+};
 ```
 
 ### Sentry Project Setup

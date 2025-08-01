@@ -1,7 +1,6 @@
 use iced::Application;
 use warp_terminal::WarpTerminal;
 use warp_terminal::monitoring::{init_monitoring, monitor_startup, monitor_shutdown, report_critical_error};
-use std::process;
 
 fn main() -> iced::Result {
     // Initialize monitoring systems (Sentry, tracing)
@@ -44,10 +43,13 @@ fn main() -> iced::Result {
     monitor_shutdown();
     
     // Flush Sentry events before exit
-    if let Some(sentry) = warp_terminal::monitoring::sentry() {
-        if sentry.is_enabled() {
-            // Give Sentry time to send any pending events
-            std::thread::sleep(std::time::Duration::from_millis(100));
+    #[cfg(feature = "sentry")]
+    {
+        if let Some(sentry) = warp_terminal::monitoring::sentry() {
+            if sentry.is_enabled() {
+                // Give Sentry time to send any pending events
+                std::thread::sleep(std::time::Duration::from_millis(100));
+            }
         }
     }
     
