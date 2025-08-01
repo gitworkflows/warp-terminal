@@ -19,16 +19,9 @@ use anyhow::Context;
 use tracing::{info, warn};
 #[cfg(feature = "sentry")]
 use tracing_subscriber::prelude::*;
-#[cfg(feature = "sentry")]
-use sentry::{protocol::Context, Level};
 
-#[cfg(feature = "sentry")]
-use sentry;
-
-#[cfg(feature = "sentry")]
 #[cfg(feature = "sentry")]
 use sentry_tracing;
-
 /// Initialize all monitoring systems with environment-aware configuration
 #[cfg(feature = "sentry")]
 pub fn init_monitoring() -> anyhow::Result<()> {

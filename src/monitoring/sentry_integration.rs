@@ -7,8 +7,6 @@ use tracing::{info};
 #[cfg(feature = "sentry")]
 use uuid::Uuid;
 
-#[cfg(feature = "sentry")]
-use sentry;
 
 /// Default sample rate for error events in production (50%)
 const DEFAULT_PRODUCTION_SAMPLE_RATE: f32 = 0.5;
