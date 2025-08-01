@@ -1,0 +1,267 @@
+# Warp Terminal Development Rules & Guidelines
+
+## 1. TODO.md Management
+
+### Format Standards:
+- **Structure**: Use consistent markdown headers (##, ###, ####) for organization
+- **Task Format**: `- [ ] Task description with clear action items`
+- **Progress Indicators**: Use emoji badges (🟢✅🟡⚠️🔴❌) for visual status
+- **Metrics**: Include completion percentages and progress bars
+- **Timestamps**: Add "Last Updated" and "Next Review" dates
+
+### Content Requirements:
+- **Priority Matrix**: Classify tasks as Critical (P0), High (P1), Medium (P2), Low (P3)
+- **Dependencies**: Clearly mark task dependencies and blocking issues
+- **Milestones**: Group tasks into logical milestones with target dates
+- **Acceptance Criteria**: Define clear success criteria for each task
+- **Auto-Tracking**: Maintain real-time metrics and velocity tracking
+
+### Quality Checks:
+- **Consistency**: Ensure consistent formatting across all sections
+- **Completeness**: All tasks must have descriptions, priorities, and owners
+- **Accuracy**: Regular validation of completion status and metrics
+- **Relevance**: Remove completed or obsolete tasks regularly
+
+## 2. AI-Generated Code Standards
+
+### Pre-Implementation:
+- **Context Analysis**: AI must understand existing codebase architecture
+- **Design Review**: Review generated design patterns before implementation
+- **Compatibility Check**: Ensure compatibility with Rust version and dependencies
+- **Security Scan**: Check for potential security vulnerabilities
+
+### Code Quality:
+- **Compilation**: All AI-generated code must compile without errors
+- **Testing**: Include comprehensive unit tests for generated functionality
+- **Documentation**: Add inline comments explaining complex logic
+- **Error Handling**: Implement proper error handling with `Result<T, E>` types
+- **Performance**: Consider performance implications and optimize where needed
+
+### Integration Requirements:
+- **Module Structure**: Follow existing module organization patterns
+- **API Consistency**: Maintain consistent API design across modules
+- **Dependency Management**: Minimize new dependencies, reuse existing ones
+- **Feature Flags**: Use conditional compilation for optional features
+
+### Review Process:
+- **Automated Checks**: Must pass `cargo test`, `cargo clippy`, `cargo fmt`
+- **Manual Review**: Human review required for all AI-generated code
+- **Integration Testing**: Test integration with existing components
+- **Performance Testing**: Benchmark critical paths for performance impact
+
+## 3. Code Quality & Standards
+
+### Rust Best Practices:
+- **Ownership**: Proper use of ownership, borrowing, and lifetimes
+- **Error Handling**: Use `Result` and `Option` types appropriately
+- **Memory Safety**: Avoid unsafe code unless absolutely necessary
+- **Concurrency**: Use async/await patterns for I/O operations
+- **Type Safety**: Leverage Rust's type system for compile-time guarantees
+
+### Code Organization:
+- **Module Structure**: Follow domain-driven design principles
+- **Separation of Concerns**: Each module should have a single responsibility
+- **Public APIs**: Minimize public surface area, use `pub(crate)` when appropriate
+- **Documentation**: All public APIs must have rustdoc documentation
+
+### Naming Conventions:
+- **Variables**: Use `snake_case` for variables and functions
+- **Types**: Use `PascalCase` for types and traits
+- **Constants**: Use `SCREAMING_SNAKE_CASE` for constants
+- **Modules**: Use `snake_case` for module names
+
+## 4. Testing Strategy
+
+### Test Coverage:
+- **Unit Tests**: Aim for 80%+ code coverage
+- **Integration Tests**: Test component interactions
+- **End-to-End Tests**: Test complete user workflows
+- **Property Tests**: Use property-based testing for complex algorithms
+
+### Test Organization:
+- **Location**: Unit tests in same file as implementation
+- **Integration**: Integration tests in `tests/` directory
+- **Benchmarks**: Performance benchmarks in `benches/` directory
+- **Mocking**: Use dependency injection for testable code
+
+### Test Quality:
+- **Descriptive Names**: Test names should describe what is being tested
+- **Arrange-Act-Assert**: Follow AAA pattern for test structure
+- **Independent**: Tests should not depend on each other
+- **Fast**: Unit tests should run quickly (< 1s each)
+
+## 5. Documentation Standards
+
+### Code Documentation:
+- **Public APIs**: All public functions, structs, and modules must be documented
+- **Examples**: Include usage examples in documentation
+- **Safety**: Document any unsafe code and its safety requirements
+- **Errors**: Document error conditions and return types
+
+### Project Documentation:
+- **README**: Keep README.md updated with current project status
+- **CHANGELOG**: Maintain changelog for version releases
+- **API Docs**: Generate and publish API documentation
+- **Architecture**: Document high-level architecture decisions
+
+### Comments:
+- **Why, Not What**: Comments should explain why, not what the code does
+- **TODOs**: Use `TODO:` comments for future improvements
+- **FIXME**: Use `FIXME:` for known issues that need addressing
+- **Safety**: Document unsafe code blocks with safety explanations
+
+## 6. Git Workflow
+
+### Branching Strategy:
+- **Main Branch**: Always keep main branch in deployable state
+- **Feature Branches**: Use descriptive branch names (feature/command-palette)
+- **Hotfix Branches**: For critical production fixes
+- **Release Branches**: For release preparation and stabilization
+
+### Commit Standards:
+- **Messages**: Use conventional commit format (feat:, fix:, docs:, etc.)
+- **Atomic**: Each commit should represent a single logical change
+- **Testing**: All commits should pass basic tests
+- **Signing**: Sign commits for security (optional but recommended)
+
+### Pull Request Process:
+- **Description**: Provide clear description of changes
+- **Checklist**: Use PR template checklist
+- **Reviews**: Require at least one review for non-trivial changes
+- **CI/CD**: All checks must pass before merging
+
+## 7. Performance Guidelines
+
+### Memory Management:
+- **Allocations**: Minimize heap allocations in hot paths
+- **Collections**: Use appropriate collection types (Vec, HashMap, etc.)
+- **Cloning**: Avoid unnecessary cloning of large data structures
+- **Lifetimes**: Use lifetimes to avoid unnecessary allocations
+
+### Async Programming:
+- **Blocking**: Never block async runtime with synchronous operations
+- **Spawning**: Use `tokio::spawn` for CPU-intensive tasks
+- **Cancellation**: Implement proper cancellation for long-running tasks
+- **Backpressure**: Handle backpressure in streaming operations
+
+### Profiling:
+- **Benchmarking**: Regular performance benchmarking
+- **Profiling**: Profile memory usage and CPU hotspots
+- **Monitoring**: Runtime performance monitoring
+- **Optimization**: Data-driven optimization decisions
+
+## 8. Security Considerations
+
+### Input Validation:
+- **Sanitization**: Sanitize all external inputs
+- **Bounds Checking**: Validate array/vector bounds
+- **Type Safety**: Use strong typing to prevent errors
+- **Command Injection**: Prevent command injection in shell operations
+
+### Dependencies:
+- **Audit**: Regular security audits of dependencies
+- **Updates**: Keep dependencies updated
+- **Minimal**: Use minimal necessary dependencies
+- **Trusted**: Only use well-maintained, trusted crates
+
+### Error Handling:
+- **Information Leakage**: Don't leak sensitive information in errors
+- **Graceful Degradation**: Handle errors gracefully
+- **Logging**: Log security-relevant events
+- **Recovery**: Implement recovery mechanisms for critical failures
+
+## 9. Release Management
+
+### Versioning:
+- **Semantic Versioning**: Follow semver (MAJOR.MINOR.PATCH)
+- **Pre-releases**: Use alpha/beta/rc suffixes for pre-releases
+- **Compatibility**: Maintain backward compatibility for minor versions
+- **Breaking Changes**: Document breaking changes in major versions
+
+### Release Process:
+- **Testing**: Comprehensive testing before releases
+- **Documentation**: Update documentation for new features
+- **Changelog**: Update changelog with all changes
+- **Artifacts**: Build and test release artifacts
+
+### Deployment:
+- **Staging**: Test in staging environment before production
+- **Rollback**: Have rollback plan for failed deployments
+- **Monitoring**: Monitor application health after deployment
+- **Communication**: Communicate releases to users and stakeholders
+
+## 10. Monitoring & Observability
+
+### Logging:
+- **Structured**: Use structured logging with consistent format
+- **Levels**: Use appropriate log levels (error, warn, info, debug, trace)
+- **Context**: Include relevant context in log messages
+- **Performance**: Avoid logging in performance-critical paths
+
+### Metrics:
+- **Key Metrics**: Track key performance indicators
+- **Alerting**: Set up alerts for critical metrics
+- **Dashboards**: Create monitoring dashboards
+- **Retention**: Define log and metric retention policies
+
+### Error Tracking:
+- **Sentry Integration**: Use Sentry for error tracking and reporting
+- **Context**: Include relevant context in error reports
+- **Privacy**: Respect user privacy in error reporting
+- **Rate Limiting**: Implement rate limiting for error reports
+
+## 11. Accessibility & Internationalization
+
+### Accessibility:
+- **Keyboard Navigation**: Ensure full keyboard accessibility
+- **Screen Readers**: Support screen reader compatibility
+- **Color Contrast**: Maintain adequate color contrast ratios
+- **Font Sizes**: Support customizable font sizes
+
+### Internationalization:
+- **Text Externalization**: Externalize all user-facing text
+- **Locale Support**: Support multiple locales
+- **RTL Languages**: Support right-to-left languages
+- **Cultural Considerations**: Consider cultural differences in UX
+
+## 12. Compliance & Legal
+
+### Licensing:
+- **License Compatibility**: Ensure all dependencies have compatible licenses
+- **Attribution**: Provide proper attribution for third-party code
+- **Copyright**: Maintain copyright notices
+- **Open Source**: Follow open source best practices
+
+### Privacy:
+- **Data Collection**: Minimize data collection
+- **User Consent**: Obtain proper consent for data usage
+- **Data Protection**: Implement appropriate data protection measures
+- **Transparency**: Be transparent about data usage
+
+---
+
+## Rule Enforcement
+
+### Automated Checks:
+- **CI/CD Pipeline**: Automated enforcement of coding standards
+- **Pre-commit Hooks**: Local enforcement before commits
+- **Code Analysis**: Static code analysis tools
+- **Dependency Scanning**: Automated dependency vulnerability scanning
+
+### Manual Reviews:
+- **Code Reviews**: Human review for all significant changes
+- **Architecture Reviews**: Review for architectural changes
+- **Security Reviews**: Security review for sensitive changes
+- **Documentation Reviews**: Review documentation for accuracy
+
+### Continuous Improvement:
+- **Retrospectives**: Regular retrospectives to improve processes
+- **Feedback**: Collect and act on feedback from team members
+- **Updates**: Regularly update rules based on learnings
+- **Training**: Provide training on new rules and practices
+
+---
+
+*Last Updated: August 1, 2025*
+*Next Review: August 15, 2025*
+*Version: 1.0*

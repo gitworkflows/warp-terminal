@@ -1,0 +1,47 @@
+{
+  "project": {
+    "name": "warp-terminal",
+    "description": "Warp terminal project with PRP workflow automation",
+    "version": "1.0.0"
+  },
+  "commands": {
+    "directory": ".claude/commands",
+    "enabled": ["generate-prp", "execute-prp"]
+  },
+  "templates": {
+    "directory": "PRPs/templates",
+    "base_template": "prp_base.md"
+  },
+  "output": {
+    "prp_directory": "PRPs",
+    "default_format": "markdown"
+  },
+  "validation": {
+    "auto_run": true,
+    "commands": {
+      "syntax": "ruff check --fix && mypy .",
+      "tests": "uv run pytest tests/ -v",
+      "lint": "flake8 . && pylint ."
+    }
+  },
+  "development": {
+    "auto_format": true,
+    "enable_debug": false,
+    "log_level": "info"
+  },
+  "git": {
+    "auto_commit": false,
+    "branch_prefix": "feature/",
+    "commit_message_template": "[PRP] {feature_name}: {description}"
+  },
+  "integration": {
+    "github_cli": true,
+    "codebase_search": true,
+    "web_search": true
+  },
+  "preferences": {
+    "ultrathink_enabled": true,
+    "confidence_threshold": 7,
+    "require_validation": true
+  }
+}
