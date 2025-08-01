@@ -1,8 +1,8 @@
 {
   "metadata": {
     "version": "1.0.0",
-    "created_at": "2025-01-21T17:59:00Z",
-    "last_modified": "2025-07-31T15:29:18.248491Z",
+    "created_at": "2025-07-31T20:13:41.655678Z",
+    "last_modified": "2025-07-31T20:26:13.312207Z",
     "backup_count": 0,
     "profile": null,
     "auto_save_enabled": true,
@@ -43,6 +43,32 @@
     "history_search_fuzzy": true,
     "enable_autocomplete": true,
     "enable_ai_command_search": true,
-    "enable_smart_suggestions": true
+    "enable_smart_suggestions": true,
+    "pane_layout": {
+      "id": "e11c2874-e08d-44e2-8db1-0abcf014fbef",
+      "direction": "Horizontal",
+      "children": [
+        {
+          "Pane": {
+            "id": "c9272108-ebac-4d39-9747-8018ab662136",
+            "title": "Terminal 1",
+            "is_active": true,
+            "working_directory": "/Users/mdsulaiman/warp-terminal",
+            "command_history": [],
+            "current_process": null,
+            "size": "Auto",
+            "min_size": 100,
+            "max_size": null,
+            "is_focused": false,
+            "shell_type": "/bin/zsh",
+            "env_vars": {}
+          }
+        }
+      ],
+      "active_pane": "c9272108-ebac-4d39-9747-8018ab662136"
+    },
+    "auto_save_layout": true,
+    "restore_layout_on_startup": true,
+    "layout_autosave_interval": 30
   }
 }
