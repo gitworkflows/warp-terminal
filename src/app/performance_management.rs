@@ -382,9 +382,13 @@ impl super::core_architecture::CacheManager {
 
 /// Resource tracker for monitoring system resource usage
 pub struct ResourceTracker {
+    #[allow(dead_code)]
     cpu_history: VecDeque<CpuUsage>,
+    #[allow(dead_code)]
     memory_history: VecDeque<MemoryUsage>,
+    #[allow(dead_code)]
     disk_history: VecDeque<DiskUsage>,
+    #[allow(dead_code)]
     network_history: VecDeque<NetworkUsage>,
     tracking_active: bool,
 }
@@ -593,6 +597,7 @@ impl CleanupScheduler {
 
 struct L1MemoryCache {
     data: HashMap<String, (Box<dyn std::any::Any + Send + Sync>, Instant)>,
+    #[allow(dead_code)]
     max_size: usize,
 }
 
@@ -1002,10 +1007,15 @@ pub enum EvictionPolicy {
 
 #[derive(Debug, Clone)]
 pub struct CacheMetrics {
+    #[allow(dead_code)]
     hits: HashMap<CacheType, u64>,
+    #[allow(dead_code)]
     misses: HashMap<CacheType, u64>,
+    #[allow(dead_code)]
     puts: HashMap<CacheType, u64>,
+    #[allow(dead_code)]
     invalidations: HashMap<CacheType, u64>,
+    #[allow(dead_code)]
     clears: HashMap<CacheType, u64>,
 }
 
@@ -1020,22 +1030,27 @@ impl CacheMetrics {
         }
     }
     
+    #[allow(dead_code)]
     async fn record_hit(&mut self, cache_type: CacheType) {
         *self.hits.entry(cache_type).or_insert(0) += 1;
     }
     
+    #[allow(dead_code)]
     async fn record_miss(&mut self, cache_type: CacheType) {
         *self.misses.entry(cache_type).or_insert(0) += 1;
     }
     
+    #[allow(dead_code)]
     async fn record_put(&mut self, cache_type: CacheType) {
         *self.puts.entry(cache_type).or_insert(0) += 1;
     }
     
+    #[allow(dead_code)]
     async fn record_invalidation(&mut self, cache_type: CacheType) {
         *self.invalidations.entry(cache_type).or_insert(0) += 1;
     }
     
+    #[allow(dead_code)]
     async fn record_clear(&mut self, cache_type: CacheType) {
         *self.clears.entry(cache_type).or_insert(0) += 1;
     }

@@ -174,22 +174,27 @@ pub struct BatchOperation {
 }
 
 /// Quick Actions engine
+#[derive(Debug, Clone)]
 pub struct QuickActionsEngine {
     /// Context detector for analyzing current environment
     context_detector: ContextDetector,
     /// Registry of available quick actions
+    /// Maps action names to their implementations
+    #[allow(dead_code)]
     action_registry: HashMap<String, QuickAction>,
-    /// Batch operations registry
     batch_registry: HashMap<String, BatchOperation>,
     /// Action execution history
     execution_history: Vec<ActionExecution>,
 }
 
 /// Context detector for analyzing environment
+#[derive(Debug, Clone)]
 pub struct ContextDetector {
     /// Cache for expensive operations
+    #[allow(dead_code)]
     cache: HashMap<String, (std::time::Instant, serde_json::Value)>,
     /// Cache TTL in seconds
+    #[allow(dead_code)]
     cache_ttl: u64,
 }
 

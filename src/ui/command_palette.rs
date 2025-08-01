@@ -5,6 +5,8 @@
 
 use crate::model::command_registry::{Command, CommandCategory, CommandRegistry};
 use crate::model::workflow_loader::WorkflowLoader;
+use crate::ui::quick_actions::{QuickActionsEngine, QuickAction};
+use crate::ui::quick_actions::ActionCategory as QuickActionCategory;
 use crate::Message;
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
@@ -48,6 +50,12 @@ pub struct CommandPalette {
     pub search_config: SearchConfig,
     /// Workflow loader for loading YAML workflows
     pub workflow_loader: WorkflowLoader,
+    /// Quick actions engine for context-aware actions
+    #[serde(skip)]
+    pub quick_actions_engine: QuickActionsEngine,
+    /// Cached quick actions from last async refresh
+    #[serde(skip)]
+    pub cached_quick_actions: Vec<QuickAction>,
 }
 
 /// Search result with match information
@@ -128,6 +136,8 @@ impl CommandPalette {
             favorites: Vec::new(),
             search_config: SearchConfig::default(),
             workflow_loader: WorkflowLoader::default(),
+            quick_actions_engine: QuickActionsEngine::new(),
+            cached_quick_actions: Vec::new(),
         };
 
         // Register default commands
@@ -236,11 +246,17 @@ impl CommandPalette {
             if self.show_favorites_only {
                 self.results = self.get_favorite_results();
             } else {
-                self.results = self.get_recent_results();
+                let mut results = self.get_recent_results();
+                // Add quick actions when no query
+                results.extend(self.get_quick_action_results(5));
+                self.results = results;
             }
         } else {
-            // Perform search
-            self.results = self.perform_search(&self.query);
+            // Perform search on both commands and quick actions
+            let mut results = self.perform_search(&self.query);
+            // Add quick actions that match the query
+            results.extend(self.search_quick_actions(&self.query));
+            self.results = results;
         }
 
         // Apply category filter
@@ -248,6 +264,13 @@ impl CommandPalette {
             self.results
                 .retain(|result| &result.command.category == category);
         }
+
+        // Sort by score
+        self.results.sort_by(|a, b| {
+            b.score
+                .partial_cmp(&a.score)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
 
         // Limit results
         self.results.truncate(MAX_SEARCH_RESULTS);
@@ -337,6 +360,81 @@ impl CommandPalette {
                 best_match_field: MatchField::Title,
             })
             .collect()
+    }
+
+    /// Get quick actions as search results (cached from previous async call)
+    fn get_quick_action_results(&self, limit: usize) -> Vec<SearchResult> {
+        // Return cached quick actions converted to search results
+        self.cached_quick_actions
+            .iter()
+            .take(limit)
+            .map(|action| self.quick_action_to_search_result(action.clone(), 1.0))
+            .collect()
+    }
+
+    /// Search quick actions based on query (from cached actions)
+    fn search_quick_actions(&self, query: &str) -> Vec<SearchResult> {
+        let query_lower = query.to_lowercase();
+        self.cached_quick_actions
+            .iter()
+            .filter_map(|action| {
+                // Simple scoring based on title and description match
+                let title_score = if action.title.to_lowercase().contains(&query_lower) {
+                    0.8
+                } else { 0.0 };
+                
+                let desc_score = if action.description.to_lowercase().contains(&query_lower) {
+                    0.5
+                } else { 0.0 };
+                
+                let final_score = (title_score + desc_score) * action.confidence;
+                
+                if final_score > 0.1 {
+                    Some(self.quick_action_to_search_result(action.clone(), final_score as f64))
+                } else {
+                    None
+                }
+            })
+            .collect()
+    }
+
+    /// Convert a QuickAction to a SearchResult
+    fn quick_action_to_search_result(&self, action: QuickAction, score: f64) -> SearchResult {
+        let confidence = action.confidence;
+        let command = self.quick_action_to_command(action);
+        SearchResult {
+            command,
+            score: score * confidence as f64,
+            title_matches: None,
+            description_matches: None,
+            best_match_field: MatchField::Title,
+        }
+    }
+
+    /// Convert a QuickAction to a Command for display purposes
+    fn quick_action_to_command(&self, action: QuickAction) -> Command {
+        let category = match action.category {
+            QuickActionCategory::Git => CommandCategory::Custom,
+            QuickActionCategory::FileSystem => CommandCategory::Custom,
+            QuickActionCategory::Development => CommandCategory::Custom,
+            QuickActionCategory::Docker => CommandCategory::Custom,
+            QuickActionCategory::SSH => CommandCategory::Custom,
+            QuickActionCategory::System => CommandCategory::Settings,
+            QuickActionCategory::Navigation => CommandCategory::Custom,
+            QuickActionCategory::Recent => CommandCategory::History,
+            QuickActionCategory::Suggested => CommandCategory::Custom,
+        };
+
+        Command {
+            id: format!("quick.{}", action.id),
+            title: action.title,
+            description: action.description,
+            category,
+            shortcut: action.shortcut.unwrap_or_default(),
+            keywords: Vec::new(), // QuickAction doesn't have keywords field
+            enabled: true,
+            priority: 0, // QuickAction doesn't have priority field, using confidence instead
+        }
     }
 
     /// Perform fuzzy search across all commands
@@ -475,6 +573,31 @@ impl CommandPalette {
             true
         } else {
             false
+        }
+    }
+
+    /// Refresh cached quick actions (to be called from async context)
+    pub async fn refresh_quick_actions(&mut self) {
+        match self.quick_actions_engine.get_quick_actions(10).await {
+            actions => {
+                self.cached_quick_actions = actions;
+                debug!("Refreshed {} quick actions", self.cached_quick_actions.len());
+                // Update results if palette is visible and no query
+                if self.is_visible && self.query.trim().is_empty() {
+                    self.update_results();
+                }
+            }
+        }
+    }
+
+    /// Set cached quick actions (called from external async context)
+    pub fn set_cached_quick_actions(&mut self, actions: Vec<QuickAction>) {
+        self.cached_quick_actions = actions;
+        debug!("Updated cached quick actions: {} items", self.cached_quick_actions.len());
+        
+        // Update results if palette is visible and no query
+        if self.is_visible && self.query.trim().is_empty() {
+            self.update_results();
         }
     }
 

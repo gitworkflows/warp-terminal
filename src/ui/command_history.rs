@@ -27,6 +27,7 @@ use uuid::Uuid;
 const MAX_SEARCH_RESULTS: usize = 50;
 
 /// Maximum number of suggestions to show
+#[allow(dead_code)]
 const MAX_SUGGESTIONS: usize = 10;
 
 /// Command History & Search interface

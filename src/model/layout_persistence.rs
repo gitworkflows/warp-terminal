@@ -291,18 +291,16 @@ impl LayoutPersistence {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::model::pane::{PaneState, PaneId};
+    use crate::ui::pane::PaneState;
+    use uuid::Uuid;
     use tempfile::TempDir;
 
     fn create_test_layout() -> SplitLayout {
-        SplitLayout {
-            pane_id: PaneId::new(),
-            pane: Some(PaneState::new()),
-            split_type: None,
-            size_ratio: 1.0,
-            children: Vec::new(),
-            is_focused: true,
-        }
+        use crate::model::pane::{SplitDirection, SplitNode, Pane};
+        let mut layout = SplitLayout::new(SplitDirection::Horizontal);
+        let pane = Pane::new("Test Pane".to_string());
+        layout.add_pane(pane);
+        layout
     }
 
     #[test]
@@ -321,7 +319,7 @@ mod tests {
         ).unwrap();
 
         let loaded_layout = persistence.load_layout(&id).unwrap();
-        assert_eq!(loaded_layout.pane_id, layout_clone.pane_id);
+        assert_eq!(loaded_layout.id, layout_clone.id);
     }
 
     #[test]

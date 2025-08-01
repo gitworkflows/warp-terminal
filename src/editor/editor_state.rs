@@ -568,7 +568,13 @@ mod tests {
     fn test_undo_redo() {
         let mut state = EditorState::new();
         
+        // First save initial state
+        state.save_snapshot();
         state.insert_text("Hello");
+        
+        // Force save another snapshot by waiting
+        state.last_save_time = std::time::SystemTime::now() - std::time::Duration::from_secs(1);
+        state.save_snapshot();
         state.insert_text(" World");
         
         assert!(state.undo());

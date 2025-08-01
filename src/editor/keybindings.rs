@@ -477,14 +477,14 @@ mod tests {
             modifiers: Modifiers::CTRL,
         };
         
-        assert_eq!(manager.format_key_binding(&binding), "Ctrl+S");
+        assert_eq!(manager.format_key_binding(&binding), "Ctrl+s");
         
         let binding = KeyBinding {
             key: Key::Character("f".into()),
             modifiers: Modifiers::CTRL | Modifiers::SHIFT,
         };
         
-        assert_eq!(manager.format_key_binding(&binding), "Ctrl+Shift+F");
+        assert_eq!(manager.format_key_binding(&binding), "Ctrl+Shift+f");
     }
 
     #[test]

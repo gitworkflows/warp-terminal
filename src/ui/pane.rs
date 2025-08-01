@@ -1,5 +1,5 @@
 use iced::{
-    widget::{column, container, row, text, text_input, scrollable},
+    widget::{column, container, row, text, text_input, scrollable, Space},
     Alignment, Background, Border, Color, Element, Length, Padding, Theme,
 };
 use crate::ui::modern_components::{glass_container, modern_button, ButtonStyle};

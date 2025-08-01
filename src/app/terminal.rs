@@ -14,6 +14,7 @@ use crate::persistence::settings_manager::SettingsManager;
 use crate::ui::block::view_block;
 use crate::ui::command_palette::CommandPalette;
 use crate::ui::command_search::CommandSearchPanel;
+use crate::ui::command_history::CommandHistoryUI;
 use crate::ui::enhanced_input::EnhancedInputState;
 use crate::ui::input::enhanced_input_section;
 use crate::ui::settings::{
@@ -65,6 +66,7 @@ pub struct WarpTerminal {
     #[allow(dead_code)]
     keyboard_shortcuts: KeyboardShortcuts,
     command_palette: CommandPalette,
+    command_history_ui: CommandHistoryUI,
     #[allow(dead_code)]
     shell_integration: ShellIntegration,
     #[allow(dead_code)]
@@ -190,6 +192,18 @@ pub enum Message {
     BatchProcessorExecute(String, String), // command_id, directory
     BatchProcessorPreview(String, String), // command_id, directory
     BatchProcessorCompleted(Result<String, String>),
+    
+    // Command History UI messages
+    CommandHistoryToggle,
+    CommandHistoryQueryChanged(String),
+    CommandHistoryNavigateUp,
+    CommandHistoryNavigateDown,
+    CommandHistoryExecuteSelected,
+    CommandHistorySelectResult(usize),
+    CommandHistorySetViewMode(crate::ui::command_history::HistoryViewMode),
+    CommandHistorySetFilter(crate::ui::command_history::SearchFilters),
+    CommandHistoryBookmarkCommand(String),
+    CommandHistoryTagCommand(String, String),
 }
 
 impl Application for WarpTerminal {
@@ -229,6 +243,7 @@ impl Application for WarpTerminal {
             pane_manager: initial_pane_manager,
             keyboard_shortcuts: KeyboardShortcuts::default(),
             command_palette: CommandPalette::new(),
+            command_history_ui: CommandHistoryUI::new(),
             shell_integration: ShellIntegration::new(ShellConfig::default()),
             enhanced_input_state: EnhancedInputState::new(),
             resizing_state: ResizingState::Idle,
@@ -1102,6 +1117,66 @@ impl Application for WarpTerminal {
                 }
                 Command::none()
             }
+            
+            // Command History UI message handling
+            Message::CommandHistoryToggle => {
+                self.command_history_ui.toggle_visibility();
+                Command::none()
+            }
+            
+            Message::CommandHistoryQueryChanged(query) => {
+                self.command_history_ui.update_search_query(query, &self.history_manager);
+                Command::none()
+            }
+            
+            Message::CommandHistoryNavigateUp => {
+                self.command_history_ui.navigate_up();
+                Command::none()
+            }
+            
+            Message::CommandHistoryNavigateDown => {
+                self.command_history_ui.navigate_down();
+                Command::none()
+            }
+            
+            Message::CommandHistoryExecuteSelected => {
+                if let Some(command) = self.command_history_ui.get_selected_command() {
+                    self.current_input = command;
+                    self.command_history_ui.hide();
+                }
+                Command::none()
+            }
+            
+            Message::CommandHistorySelectResult(index) => {
+                self.command_history_ui.selected_index = index;
+                Command::none()
+            }
+            
+            Message::CommandHistorySetViewMode(view_mode) => {
+                self.command_history_ui.set_view_mode(view_mode, &self.history_manager);
+                Command::none()
+            }
+            
+            Message::CommandHistorySetFilter(filter) => {
+                self.command_history_ui.active_filters = filter;
+                Command::none()
+            }
+            
+            Message::CommandHistoryBookmarkCommand(_command) => {
+                // TODO: Add bookmark functionality to history manager
+                // if let Some(entry_id) = self.history_manager.find_entry_by_command(&command) {
+                //     self.history_manager.bookmark_command(entry_id);
+                // }
+                Command::none()
+            }
+            
+            Message::CommandHistoryTagCommand(_command, _tag) => {
+                // TODO: Add tag functionality to history manager
+                // if let Some(entry_id) = self.history_manager.find_entry_by_command(&command) {
+                //     self.history_manager.tag_command(entry_id, tag);
+                // }
+                Command::none()
+            }
         }
     }
 
@@ -1131,12 +1206,14 @@ impl Application for WarpTerminal {
             Color::from_rgb(0.4, 0.4, 0.5)
         };
 
-        // Header with settings, command search, and synchronization controls
+        // Header with settings, command search, command history, and synchronization controls
         let header_buttons = row![
             button(text("Settings").font(font).size(font_size))
                 .on_press(Message::InputChanged("toggle_settings".into())),
             button(text("⚡ Search (Ctrl+R)").font(font).size(font_size))
                 .on_press(Message::ToggleCommandSearch),
+            button(text("📜 History").font(font).size(font_size))
+                .on_press(Message::CommandHistoryToggle),
             button(
                 text(sync_indicator_text)
                     .size(font_size - 2)
@@ -1255,8 +1332,10 @@ impl Application for WarpTerminal {
                 .into()
         };
 
-        // Show Command Search panel if visible, otherwise show main content
-        if self.command_search_panel.is_visible {
+        // Show Command History UI if toggled, otherwise show main content
+        if self.command_history_ui.is_visible {
+            self.command_history_ui.view(font, font_size)
+        } else if self.command_search_panel.is_visible {
             self.command_search_panel.view(font, font_size)
         } else {
             _main_content

@@ -318,8 +318,12 @@ mod tests {
     fn test_sync_shortcut_detection() {
         let shortcuts = KeyboardShortcuts::default();
 
-        // Test sync shortcuts
-        let modifiers = Modifiers::CTRL | Modifiers::ALT;
+        // Test sync shortcuts - need to use COMMAND on macOS if that's what the shortcut expects
+        let modifiers = if cfg!(target_os = "macos") {
+            Modifiers::COMMAND | Modifiers::ALT
+        } else {
+            Modifiers::CTRL | Modifiers::ALT
+        };
         assert!(shortcuts.is_sync_shortcut(&Key::Character("i".into()), &modifiers));
         assert!(shortcuts.is_sync_shortcut(&Key::Character("t".into()), &modifiers));
         assert!(shortcuts.is_sync_shortcut(&Key::Character("a".into()), &modifiers));

@@ -72,6 +72,10 @@ fn create_test_settings() -> SettingsState {
         enable_autocomplete: true,
         enable_ai_command_search: false,
         enable_smart_suggestions: true,
+        auto_save_layout: false,
+        layout_autosave_interval: 300,
+        pane_layout: None,
+        restore_layout_on_startup: false,
     }
 }
 
@@ -81,7 +85,7 @@ async fn test_settings_create_and_load_default() -> Result<()> {
     let manager = create_test_manager(&temp_dir);
 
     // Load settings when file doesn't exist should return defaults
-    let loaded_settings = manager.load_settings().await;
+    let (loaded_settings, _) = manager.load_settings().await;
     let default_settings = SettingsState::default();
 
     assert_eq!(loaded_settings.font_size, default_settings.font_size);
@@ -102,14 +106,14 @@ async fn test_settings_save_and_load_cycle() -> Result<()> {
     let test_settings = create_test_settings();
 
     // Save test settings
-    manager.save_settings(&test_settings).await?;
+    manager.save_settings(&test_settings, None).await?;
     assert!(
         manager.settings_path().exists(),
         "Settings file should exist after save"
     );
 
     // Load settings back
-    let loaded_settings = manager.load_settings().await;
+    let (loaded_settings, _) = manager.load_settings().await;
 
     // Verify key properties
     assert_eq!(loaded_settings.font_family, "JetBrains Mono");
@@ -130,7 +134,7 @@ async fn test_settings_auto_save_functionality() -> Result<()> {
     let mut test_settings = create_test_settings();
 
     // Mark settings as changed and wait for auto-save
-    manager.mark_settings_changed(&test_settings).await;
+    manager.mark_settings_changed(&test_settings, None).await;
     sleep(Duration::from_millis(1500)).await; // Wait for auto-save delay
 
     // Verify file was created
@@ -141,11 +145,11 @@ async fn test_settings_auto_save_functionality() -> Result<()> {
 
     // Change settings again
     test_settings.font_size = 18;
-    manager.mark_settings_changed(&test_settings).await;
+    manager.mark_settings_changed(&test_settings, None).await;
     sleep(Duration::from_millis(1500)).await;
 
     // Load and verify changes
-    let loaded_settings = manager.load_settings().await;
+    let (loaded_settings, _) = manager.load_settings().await;
     assert_eq!(loaded_settings.font_size, 18);
 
     println!("✅ Auto-save functionality working correctly");
@@ -159,11 +163,11 @@ async fn test_settings_backup_creation_and_restoration() -> Result<()> {
     let mut test_settings = create_test_settings();
 
     // Save initial settings
-    manager.save_settings(&test_settings).await?;
+    manager.save_settings(&test_settings, None).await?;
 
     // Modify and save again (should create backup)
     test_settings.font_size = 20;
-    manager.save_settings(&test_settings).await?;
+    manager.save_settings(&test_settings, None).await?;
 
     // Check that backup was created
     let backups = manager.list_backups().await?;
@@ -194,8 +198,8 @@ async fn test_settings_validation_and_error_handling() -> Result<()> {
         !validation_errors.is_empty(),
         "Validation should catch invalid settings"
     );
-    assert!(validation_errors.iter().any(|e| e.contains("font size")));
-    assert!(validation_errors.iter().any(|e| e.contains("line height")));
+    assert!(validation_errors.iter().any(|e| e.contains("Font size")));
+    assert!(validation_errors.iter().any(|e| e.contains("Line height")));
     assert!(validation_errors.iter().any(|e| e.contains("columns")));
 
     println!("✅ Settings validation working correctly");
@@ -277,7 +281,7 @@ async fn test_settings_format_switching() -> Result<()> {
     let test_settings = create_test_settings();
 
     // Save as JSON first
-    manager.save_settings(&test_settings).await?;
+    manager.save_settings(&test_settings, None).await?;
     let json_format = manager.get_format_preference().await;
     assert_eq!(json_format, SettingsFormat::Json);
 
@@ -289,7 +293,7 @@ async fn test_settings_format_switching() -> Result<()> {
     assert_eq!(toml_format, SettingsFormat::Toml);
 
     // Verify settings can still be loaded after format change
-    let loaded_settings = manager.load_settings().await;
+    let (loaded_settings, _) = manager.load_settings().await;
     assert_eq!(loaded_settings.font_family, test_settings.font_family);
 
     println!("✅ Settings format switching working correctly");
@@ -327,7 +331,7 @@ async fn test_settings_concurrent_access() -> Result<()> {
     let test_settings = create_test_settings();
 
     // Save initial settings
-    manager.save_settings(&test_settings).await?;
+    manager.save_settings(&test_settings, None).await?;
 
     // Simulate concurrent access
     let manager1 = manager.clone();
@@ -338,12 +342,12 @@ async fn test_settings_concurrent_access() -> Result<()> {
 
     // Concurrent operations
     let task1 = tokio::spawn(async move {
-        manager1.mark_settings_changed(&settings1).await;
+        manager1.mark_settings_changed(&settings1, None).await;
         sleep(Duration::from_millis(500)).await;
     });
 
     let task2 = tokio::spawn(async move {
-        manager2.mark_settings_changed(&settings2).await;
+        manager2.mark_settings_changed(&settings2, None).await;
         sleep(Duration::from_millis(500)).await;
     });
 
@@ -355,7 +359,7 @@ async fn test_settings_concurrent_access() -> Result<()> {
     sleep(Duration::from_millis(2000)).await;
 
     // Verify final state
-    let final_settings = manager.load_settings().await;
+    let (final_settings, _) = manager.load_settings().await;
     assert!(final_settings.font_size == 16 || final_settings.font_size == 18);
 
     println!("✅ Concurrent settings access handled correctly");
@@ -373,7 +377,7 @@ async fn test_settings_backup_cleanup() -> Result<()> {
     // Create multiple backups by saving repeatedly
     for i in 0..6 {
         test_settings.font_size = 12 + i;
-        manager.save_settings(&test_settings).await?;
+        manager.save_settings(&test_settings, None).await?;
         sleep(Duration::from_millis(100)).await; // Ensure different timestamps
     }
 
@@ -398,16 +402,16 @@ async fn test_settings_error_recovery() -> Result<()> {
     fs::write(manager.settings_path(), corrupted_content)?;
 
     // Load settings should fall back to defaults
-    let loaded_settings = manager.load_settings().await;
+    let (loaded_settings, _) = manager.load_settings().await;
     let default_settings = SettingsState::default();
     assert_eq!(loaded_settings.font_size, default_settings.font_size);
 
     // Save valid settings should work and create backup of corrupted file
     let test_settings = create_test_settings();
-    manager.save_settings(&test_settings).await?;
+    manager.save_settings(&test_settings, None).await?;
 
     // Verify settings are now loadable
-    let recovered_settings = manager.load_settings().await;
+    let (recovered_settings, _) = manager.load_settings().await;
     assert_eq!(recovered_settings.font_family, "JetBrains Mono");
 
     println!("✅ Settings error recovery working correctly");
@@ -424,12 +428,12 @@ async fn test_settings_pending_changes_tracking() -> Result<()> {
     assert!(!manager.has_pending_changes().await);
 
     // Mark changes and check
-    manager.mark_settings_changed(&test_settings).await;
+    manager.mark_settings_changed(&test_settings, None).await;
     // Give a moment for the async task to set pending flag
     sleep(Duration::from_millis(100)).await;
 
     // Force flush pending changes
-    manager.flush_pending_changes(&test_settings).await?;
+    manager.flush_pending_changes(&test_settings, None).await?;
 
     // After flush, should have no pending changes
     assert!(!manager.has_pending_changes().await);
@@ -447,12 +451,12 @@ async fn test_complete_settings_lifecycle() -> Result<()> {
     println!("🚀 Testing complete settings lifecycle...");
 
     // 1. Start with defaults
-    let mut settings = manager.load_settings().await;
+    let (mut settings, _) = manager.load_settings().await;
     println!("   📁 Loaded default settings");
 
     // 2. Apply developer profile
     settings = SettingsHandler::get_profile_defaults(SettingsProfile::Developer);
-    manager.save_settings(&settings).await?;
+    manager.save_settings(&settings, None).await?;
     println!("   👨‍💻 Applied developer profile");
 
     // 3. Customize some settings
@@ -461,7 +465,7 @@ async fn test_complete_settings_lifecycle() -> Result<()> {
     settings
         .history_exclude_patterns
         .push("*.secret".to_string());
-    manager.mark_settings_changed(&settings).await;
+    manager.mark_settings_changed(&settings, None).await;
     sleep(Duration::from_millis(2000)).await; // Wait for auto-save
     println!("   ✏️  Applied custom changes with auto-save");
 
@@ -472,16 +476,16 @@ async fn test_complete_settings_lifecycle() -> Result<()> {
 
     // 5. Reset to minimal profile
     settings = SettingsHandler::get_profile_defaults(SettingsProfile::Minimal);
-    manager.save_settings(&settings).await?;
+    manager.save_settings(&settings, None).await?;
     println!("   🔧 Switched to minimal profile");
 
     // 6. Import previous settings
     let imported_settings = manager.import_settings(&export_path).await?;
-    manager.save_settings(&imported_settings).await?;
+    manager.save_settings(&imported_settings, None).await?;
     println!("   📥 Re-imported previous settings");
 
     // 7. Verify final state
-    let final_settings = manager.load_settings().await;
+    let (final_settings, _) = manager.load_settings().await;
     assert_eq!(final_settings.font_size, 18);
     assert_eq!(final_settings.window_columns, 100);
     assert!(final_settings
@@ -514,8 +518,8 @@ async fn test_settings_performance() -> Result<()> {
     for i in 0..100 {
         let mut settings = test_settings.clone();
         settings.font_size = 12 + (i % 20);
-        manager.save_settings(&settings).await?;
-        let _loaded = manager.load_settings().await;
+        manager.save_settings(&settings, None).await?;
+        let (_loaded, _) = manager.load_settings().await;
     }
 
     let elapsed = start.elapsed();

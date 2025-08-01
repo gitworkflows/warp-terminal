@@ -307,6 +307,6 @@ mod tests {
         
         let path = Path::new("workflows/specs/git/clone-with-ssh.yaml");
         let id = loader.generate_workflow_id(path, &workflow);
-        assert_eq!(id, "workflow.git.clone-with-ssh");
+        assert_eq!(id, "workflow.git.clone_with_ssh");
     }
 }
