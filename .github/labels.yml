@@ -1,0 +1,130 @@
+# GitHub Labels Configuration
+# This file defines all labels used in the repository
+# Format: YAML with name, description, and color properties
+# Based on TODO.md analysis and current repository structure
+
+# Default GitHub Labels
+- name: "bug"
+  description: "Something isn't working"
+  color: "d73a4a"
+
+- name: "documentation"
+  description: "Improvements or additions to documentation"
+  color: "0075ca"
+
+- name: "duplicate"
+  description: "This issue or pull request already exists"
+  color: "cfd3d7"
+
+- name: "enhancement"
+  description: "New feature or request"
+  color: "a2eeef"
+
+- name: "good first issue"
+  description: "Good for newcomers"
+  color: "7057ff"
+
+- name: "help wanted"
+  description: "Extra attention is needed"
+  color: "008672"
+
+- name: "invalid"
+  description: "This doesn't seem right"
+  color: "e4e669"
+
+- name: "question"
+  description: "Further information is requested"
+  color: "d876e3"
+
+- name: "wontfix"
+  description: "This will not be worked on"
+  color: "ffffff"
+
+# Dependency and Language Labels
+- name: "dependencies"
+  description: "Pull requests that update a dependency file"
+  color: "0366d6"
+
+- name: "javascript"
+  description: "Pull requests that update javascript code"
+  color: "168700"
+
+# Priority Labels (Legacy)
+- name: "🚨 Critical (P0)"
+  description: "Must fix immediately - blocking all development"
+  color: "FF0000"
+
+- name: "⚡ High (P1)"
+  description: "Complete this week - high priority tasks"
+  color: "FF6600"
+
+- name: "📋 Medium (P2)"
+  description: "Next 2 weeks - medium priority tasks"
+  color: "FFAA00"
+
+- name: "🔮 Low (P3)"
+  description: "Future iterations - low priority tasks"
+  color: "66BB6A"
+
+# Feature Area Labels (Legacy)
+- name: "🎨 UI Design"
+  description: "UI design review and implementation tasks"
+  color: "E91E63"
+
+- name: "🏗️ Architecture"
+  description: "Core architecture and system design"
+  color: "2196F3"
+
+- name: "⚙️ Command Palette"
+  description: "Command palette and quick actions features"
+  color: "9C27B0"
+
+- name: "🔍 Command History"
+  description: "Command history, search, and analytics"
+  color: "607D8B"
+
+- name: "🌐 WebSocket"
+  description: "WebSocket integration and real-time communication"
+  color: "00BCD4"
+
+# Priority Labels (Current)
+- name: "🚨 P0 - Critical"
+  description: "Must fix immediately - blocking all development"
+  color: "d73a4a"
+
+- name: "⚡ P1 - High"
+  description: "Complete this week - high priority features"
+  color: "ff9500"
+
+- name: "📋 P2 - Medium"
+  description: "Next 2 weeks - medium priority features"
+  color: "fbca04"
+
+- name: "🔮 P3 - Low"
+  description: "Future iterations - low priority enhancements"
+  color: "c5def5"
+
+# Feature Area Labels (Current)
+- name: "🏗️ Core Systems"
+  description: "Core architecture and foundational components"
+  color: "1d76db"
+
+- name: "⌨️ Command Systems"
+  description: "Command palette, history, and execution features"
+  color: "0052cc"
+
+- name: "🎨 UI/UX Components"
+  description: "User interface and experience features"
+  color: "e99695"
+
+- name: "🚀 Advanced Features"
+  description: "AI-powered and advanced functionality"
+  color: "5319e7"
+
+- name: "🔒 Security & Privacy"
+  description: "Security framework and privacy features"
+  color: "b60205"
+
+- name: "🧪 Testing & QA"
+  description: "Testing framework and quality assurance"
+  color: "0e8a16"

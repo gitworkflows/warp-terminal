@@ -1,0 +1,62 @@
+name: 🏷️ Auto Label Sync
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - '.github/labels.yml'
+  pull_request:
+    branches:
+      - main
+      - master
+    paths:
+      - '.github/labels.yml'
+  workflow_dispatch:
+    inputs:
+      force_sync:
+        description: 'Force sync all labels (will delete unused labels)'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  sync-labels:
+    name: 🔄 Sync Repository Labels
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: read
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🏷️ Sync Labels
+        uses: EndBug/label-sync@v2
+        with:
+          config-file: .github/labels.yml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          delete-other-labels: ${{ github.event.inputs.force_sync == 'true' }}
+          dry-run: ${{ github.event_name == 'pull_request' }}
+
+      - name: 📊 Label Sync Summary
+        if: success()
+        run: |
+          echo "✅ Label sync completed successfully!"
+          echo "🔍 Check the job logs above for detailed changes."
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "🧪 This was a dry-run for PR. Labels will be synced when merged to main."
+          fi
+
+      - name: 🚨 Label Sync Failed
+        if: failure()
+        run: |
+          echo "❌ Label sync failed!"
+          echo "🔍 Please check the job logs for error details."
+          echo "💡 Common issues:"
+          echo "   - Invalid YAML syntax in .github/labels.yml"
+          echo "   - Invalid color codes (must be 6-digit hex without #)"
+          echo "   - Missing required permissions"
