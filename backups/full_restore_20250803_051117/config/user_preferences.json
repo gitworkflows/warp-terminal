@@ -1,0 +1,19 @@
+{
+  "appearance": {
+    "theme": "dark",
+    "font_family": "Hack",
+    "font_size": 14,
+    "cursor_style": "block"
+  },
+  "behavior": {
+    "auto_suggestions": true,
+    "command_palette": true,
+    "vim_mode": false
+  },
+  "terminal": {
+    "shell": "/bin/bash",
+    "startup_command": null,
+    "working_directory": "~/",
+    "tab_width": 4
+  }
+}

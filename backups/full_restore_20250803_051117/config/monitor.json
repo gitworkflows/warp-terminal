@@ -1,0 +1,18 @@
+{
+  "monitoring": {
+    "enabled": true,
+    "poll_interval": 1.0,
+    "max_log_size": "10MB",
+    "rotate_count": 5
+  },
+  "alerts": {
+    "error_threshold": 10,
+    "email_notifications": false,
+    "slack_webhook": null
+  },
+  "logging": {
+    "level": "INFO",
+    "console_output": true,
+    "file_output": true
+  }
+}

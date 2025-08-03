@@ -1,0 +1,38 @@
+{
+  "version": "1.0.0",
+  "components": {
+    "glass_morphism_container": {
+      "file": "modern_components.rs",
+      "description": "Transparent containers with blur effects"
+    },
+    "modern_card": {
+      "file": "modern_components.rs", 
+      "description": "Elevated card design with shadows"
+    },
+    "gradient_button": {
+      "file": "modern_components.rs",
+      "description": "Interactive buttons with gradients"
+    },
+    "command_palette": {
+      "file": "command_palette.rs",
+      "description": "Command palette interface"
+    },
+    "file_picker": {
+      "file": "file_picker.rs",
+      "description": "File selection dialogs"
+    },
+    "theme_selector": {
+      "file": "theme_selector.rs",
+      "description": "Theme selection UI"
+    },
+    "settings_panel": {
+      "file": "settings.rs",
+      "description": "Settings management interface"
+    }
+  },
+  "dependencies": {
+    "iced": "0.12.1",
+    "wgpu": "latest",
+    "tokio": "1.0"
+  }
+}

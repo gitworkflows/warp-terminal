@@ -1,0 +1,46 @@
+name: "Enhanced Dark"
+author: "Warp Team"
+accent: "#00D4FF"
+background: "#0D1117"
+foreground: "#E6EDF3"
+details: "darker"
+
+ui_colors:
+  primary: "#0050FF"
+  secondary: "#00B3E6"
+  accent: "#00D4FF"
+  success: "#7EE787"
+  warning: "#F9E2AF"
+  error: "#F85149"
+  info: "#79C0FF"
+
+glass_morphism:
+  background: "rgba(13, 17, 23, 0.85)"
+  blur: 20
+  border: "rgba(255, 255, 255, 0.1)"
+
+terminal_colors:
+  normal:
+    black: "#21262D"
+    red: "#F85149"
+    green: "#7EE787"
+    yellow: "#F9E2AF"
+    blue: "#79C0FF"
+    magenta: "#D2A8FF"
+    cyan: "#39D0D8"
+    white: "#E6EDF3"
+  bright:
+    black: "#8B949E"
+    red: "#FF7B72"
+    green: "#56D364"
+    yellow: "#E3B341"
+    blue: "#58A6FF"
+    magenta: "#BC8CFF"
+    cyan: "#39D0D8"
+    white: "#F0F6FC"
+
+fonts:
+  primary: "SF Mono"
+  fallback: ["Menlo", "Monaco", "Courier New"]
+  size: 14
+  line_height: 1.4

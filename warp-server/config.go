@@ -7,17 +7,19 @@ import (
 
 // Config holds the application configuration
 type Config struct {
-	Port        string
-	Environment string
-	LogLevel    string
+	Port         string
+	Environment  string
+	LogLevel     string
+	DatabasePath string
 }
 
 // LoadConfig loads configuration from environment variables
 func LoadConfig() *Config {
 	return &Config{
-		Port:        getEnv("PORT", "8080"),
-		Environment: getEnv("ENV", "development"),
-		LogLevel:    getEnv("LOG_LEVEL", "info"),
+		Port:         getEnv("PORT", "8080"),
+		Environment:  getEnv("ENV", "development"),
+		LogLevel:     getEnv("LOG_LEVEL", "info"),
+		DatabasePath: getEnv("DATABASE_PATH", "/Users/KhulnaSoft/Library/Application Support/dev.warp.Warp-Preview/warp.sqlite"),
 	}
 }
 

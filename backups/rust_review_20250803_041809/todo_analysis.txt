@@ -1,0 +1,38 @@
+=== TODO and FIXME Analysis ===
+/Users/KhulnaSoft/.warp/src/ui/command_history.rs:340:                // TODO: Implement specific session filtering
+/Users/KhulnaSoft/.warp/src/ui/command_history.rs:634:            command_trends: HashMap::new(), // TODO: Implement trend analysis
+/Users/KhulnaSoft/.warp/src/ui/command_history.rs:635:            daily_activity: Vec::new(),     // TODO: Implement daily activity
+/Users/KhulnaSoft/.warp/src/ui/command_history.rs:636:            directory_usage: HashMap::new(), // TODO: Implement directory usage
+/Users/KhulnaSoft/.warp/src/ui/command_history.rs:637:            error_patterns: Vec::new(),     // TODO: Implement error pattern analysis
+/Users/KhulnaSoft/.warp/src/ui/command_history.rs:774:        let is_active = false; // TODO: Check if this filter is active
+/Users/KhulnaSoft/.warp/src/ui/command_history.rs:879:            // TODO: Implement highlighting
+/Users/KhulnaSoft/.warp/src/app/terminal.rs:352:                    "light_theme_picker" => { /* TODO: Open theme picker */ }
+/Users/KhulnaSoft/.warp/src/app/terminal.rs:353:                    "dark_theme_picker" => { /* TODO: Open theme picker */ }
+/Users/KhulnaSoft/.warp/src/app/terminal.rs:354:                    "create_theme" => { /* TODO: Open theme creator */ }
+/Users/KhulnaSoft/.warp/src/app/terminal.rs:357:                    "font_family" => { /* TODO: Handle font family input */ }
+/Users/KhulnaSoft/.warp/src/app/terminal.rs:358:                    "font_size" => { /* TODO: Handle font size slider */ }
+/Users/KhulnaSoft/.warp/src/app/terminal.rs:376:                    "window_columns" => { /* TODO: Handle window columns input */ }
+/Users/KhulnaSoft/.warp/src/app/terminal.rs:377:                    "window_rows" => { /* TODO: Handle window rows input */ }
+/Users/KhulnaSoft/.warp/src/app/terminal.rs:378:                    "window_opacity" => { /* TODO: Handle window opacity slider */ }
+/Users/KhulnaSoft/.warp/src/app/terminal.rs:379:                    "window_blur" => { /* TODO: Handle window blur slider */ }
+/Users/KhulnaSoft/.warp/src/app/terminal.rs:406:                    "icon_default" => { /* TODO: Handle icon selection */ }
+/Users/KhulnaSoft/.warp/src/app/terminal.rs:843:                // TODO: Implement directional pane navigation
+/Users/KhulnaSoft/.warp/src/app/terminal.rs:1166:                // TODO: Add bookmark functionality to history manager
+/Users/KhulnaSoft/.warp/src/app/terminal.rs:1174:                // TODO: Add tag functionality to history manager
+/Users/KhulnaSoft/.warp/src/ai/code_generator.rs:402:            Ok(format!("// Generated JavaScript code for: {}\nfunction generatedFunction() {{\n    // TODO: Implement functionality\n}}\n", prompt))
+/Users/KhulnaSoft/.warp/src/ai/code_generator.rs:430:            Ok(format!("// Generated TypeScript code for: {}\nfunction generatedFunction(): void {{\n    // TODO: Implement functionality\n}}\n", prompt))
+/Users/KhulnaSoft/.warp/src/ai/code_generator.rs:473:            Ok(format!("# Generated Python code for: {}\ndef generated_function():\n    \"\"\"TODO: Implement functionality\"\"\"\n    pass\n", prompt))
+/Users/KhulnaSoft/.warp/src/ai/code_generator.rs:478:        Ok(format!("// Generated Rust code for: {}\npub fn generated_function() {{\n    // TODO: Implement functionality\n}}\n", prompt))
+/Users/KhulnaSoft/.warp/src/ai/code_generator.rs:643:        Ok(format!("// Generated code for: {}\n// TODO: Implement", request.prompt))
+
+=== HIGH PRIORITY TODOs ===
+=== TODO and FIXME Analysis ===
+/Users/KhulnaSoft/.warp/src/ui/command_history.rs:340:                // TODO: Implement specific session filtering
+/Users/KhulnaSoft/.warp/src/ui/command_history.rs:634:            command_trends: HashMap::new(), // TODO: Implement trend analysis
+/Users/KhulnaSoft/.warp/src/ui/command_history.rs:635:            daily_activity: Vec::new(),     // TODO: Implement daily activity
+/Users/KhulnaSoft/.warp/src/ui/command_history.rs:636:            directory_usage: HashMap::new(), // TODO: Implement directory usage
+/Users/KhulnaSoft/.warp/src/ui/command_history.rs:637:            error_patterns: Vec::new(),     // TODO: Implement error pattern analysis
+/Users/KhulnaSoft/.warp/src/ui/command_history.rs:879:            // TODO: Implement highlighting
+/Users/KhulnaSoft/.warp/src/app/terminal.rs:843:                // TODO: Implement directional pane navigation
+/Users/KhulnaSoft/.warp/src/ai/code_generator.rs:402:            Ok(format!("// Generated JavaScript code for: {}\nfunction generatedFunction() {{\n    // TODO: Implement functionality\n}}\n", prompt))
+/Users/KhulnaSoft/.warp/src/ai/code_generator.rs:430:            Ok(format!("// Generated TypeScript code for: {}\nfunction generatedFunction(): void {{\n    // TODO: Implement functionality\n}}\n", prompt))

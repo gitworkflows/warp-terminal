@@ -1,4 +1,4 @@
-use crate::ui::modern_components::{ModernUI, ModernCard};
+use crate::ui::modern_components::WarpUI;
 use crate::ui::file_picker;
 use iced::widget::{button, column, container, row, text, Space, slider};
 use iced::{theme, Alignment, Background, Border, Color, Element, Length, Shadow, Vector};
@@ -313,28 +313,27 @@ impl ThemeSelector {
             Space::with_height(16),
             current_theme_info,
             Space::with_height(16),
-            ModernUI::scrollable(theme_grid).height(Length::Fill),
+            WarpUI::scrollable(theme_grid).height(Length::Fill),
         ]
         .spacing(0)
         .padding(24);
 
-        ModernUI::glass_container(content.into()).into()
+        WarpUI::glass_container(content.into()).into()
     }
 
     fn create_header<'a, Message: Clone + 'a>(&self, message_map: &'a dyn Fn(ThemeSelectorMessage) -> Message) -> Element<'a, Message> {
         let title_row = row![
-            ModernUI::section_header(
-                "🎨 Theme Selector",
-                Some(&format!("{} themes available", self.available_themes.len()))
+            WarpUI::section_header(
+                "🎨 Theme Selector"
             ),
             Space::with_width(Length::Fill),
             row![
-                ModernUI::secondary_button(
+                WarpUI::secondary_button(
                     "📁 Load Theme",
                     Some(message_map(ThemeSelectorMessage::LoadCustomTheme))
                 ),
                 Space::with_width(8),
-                ModernUI::secondary_button(
+                WarpUI::secondary_button(
                     "🖼️ Background",
                     Some(message_map(ThemeSelectorMessage::ToggleBackgroundSettings))
                 ),
@@ -353,7 +352,7 @@ impl ThemeSelector {
     }
 
     fn create_background_settings<'a, Message: Clone + 'a>(&self, message_map: &'a dyn Fn(ThemeSelectorMessage) -> Message) -> Element<'a, Message> {
-        ModernUI::card(
+        WarpUI::card(
             column![
                 text("Background Settings").size(16).style(Color::from_rgb(0.95, 0.95, 0.95)),
                 Space::with_height(12),
@@ -374,12 +373,12 @@ impl ThemeSelector {
                     },
                     Space::with_width(Length::Fill),
                     if self.background_image.is_some() {
-                        ModernUI::secondary_button(
+                        WarpUI::secondary_button(
                             "Remove",
                             Some(message_map(ThemeSelectorMessage::RemoveBackgroundImage))
                         )
                     } else {
-                        ModernUI::secondary_button(
+                        WarpUI::secondary_button(
                             "📁 Select Image",
                             Some(message_map(ThemeSelectorMessage::SelectBackgroundImage))
                         )
@@ -426,7 +425,7 @@ impl ThemeSelector {
         row![
             text("🔍").size(16),
             Space::with_width(12),
-            ModernUI::text_input(
+            WarpUI::text_input(
                 "Search themes by name or description...",
                 &self.search_query,
                 move |query| message_map(ThemeSelectorMessage::SearchQueryChanged(query))
@@ -454,12 +453,12 @@ impl ThemeSelector {
             let button_text = format!("{} {}", icon, label);
             
             let btn = if is_active {
-                ModernUI::primary_button(
+                WarpUI::primary_button(
                     &button_text,
                     Some(message_map(ThemeSelectorMessage::CategoryFilterChanged(category)))
                 )
             } else {
-                ModernUI::secondary_button(
+                WarpUI::secondary_button(
                     &button_text,
                     Some(message_map(ThemeSelectorMessage::CategoryFilterChanged(category)))
                 )
@@ -468,7 +467,7 @@ impl ThemeSelector {
             filter_row = filter_row.push(btn);
         }
 
-        ModernUI::scrollable(filter_row.into()).into()
+        WarpUI::scrollable(filter_row).into()
     }
 
     fn create_current_theme_info<'a, Message: Clone + 'a>(&self) -> Element<'a, Message> {
@@ -498,7 +497,7 @@ impl ThemeSelector {
                 color_preview,
             ].spacing(0);
 
-            ModernUI::card(info.into()).into()
+            WarpUI::card(info.into()).into()
         } else {
             Space::with_height(0).into()
         }
@@ -580,15 +579,15 @@ impl ThemeSelector {
             Space::with_height(12),
             row![
                 if is_current {
-                    ModernUI::primary_button("✓ Active", None)
+                    WarpUI::primary_button("✓ Active", None)
                 } else {
-                    ModernUI::secondary_button(
+                    WarpUI::secondary_button(
                         "Apply",
                         Some(message_map(ThemeSelectorMessage::ApplyTheme(theme.name.clone())))
                     )
                 },
                 Space::with_width(8),
-                ModernUI::secondary_button(
+                WarpUI::secondary_button(
                     if is_preview { "Hide Preview" } else { "Preview" },
                     Some(message_map(ThemeSelectorMessage::PreviewTheme(
                         if is_preview { None } else { Some(theme.name.clone()) }
@@ -602,7 +601,7 @@ impl ThemeSelector {
         } else if is_preview {
             theme::Container::Custom(Box::new(PreviewThemeCardStyle))
         } else {
-            theme::Container::Custom(Box::new(ModernCard::default()))
+            theme::Container::Custom(Box::new(crate::ui::modern_components::WarpModernCard::default()))
         };
 
         container(content)

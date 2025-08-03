@@ -1,0 +1,26 @@
+name: "Light"
+author: "Warp Team"
+accent: "#0969DA"
+background: "#FFFFFF"
+foreground: "#24292F"
+details: "lighter"
+
+terminal_colors:
+  normal:
+    black: "#24292F"
+    red: "#CF222E"
+    green: "#116329"
+    yellow: "#4D2D00"
+    blue: "#0969DA"
+    magenta: "#8250DF"
+    cyan: "#1B7C83"
+    white: "#6E7781"
+  bright:
+    black: "#656D76"
+    red: "#A40E26"
+    green: "#1A7F37"
+    yellow: "#633C01"
+    blue: "#218BFF"
+    magenta: "#A475F9"
+    cyan: "#3192AA"
+    white: "#8C959F"

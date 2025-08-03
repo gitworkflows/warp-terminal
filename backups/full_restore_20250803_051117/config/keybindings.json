@@ -1,0 +1,16 @@
+{
+  "global": {
+    "new_tab": "Cmd+T",
+    "close_tab": "Cmd+W",
+    "next_tab": "Cmd+]",
+    "prev_tab": "Cmd+[",
+    "split_pane_horizontal": "Cmd+D",
+    "split_pane_vertical": "Cmd+Shift+D"
+  },
+  "terminal": {
+    "clear_screen": "Cmd+K",
+    "copy": "Cmd+C",
+    "paste": "Cmd+V",
+    "search": "Cmd+F"
+  }
+}

@@ -1,0 +1,26 @@
+name: "Dark"
+author: "Warp Team"
+accent: "#00D4FF"
+background: "#0D1117"
+foreground: "#E6EDF3"
+details: "darker"
+
+terminal_colors:
+  normal:
+    black: "#21262D"
+    red: "#F85149"
+    green: "#7EE787"
+    yellow: "#F9E2AF"
+    blue: "#79C0FF"
+    magenta: "#D2A8FF"
+    cyan: "#39D0D8"
+    white: "#E6EDF3"
+  bright:
+    black: "#8B949E"
+    red: "#FF7B72"
+    green: "#56D364"
+    yellow: "#E3B341"
+    blue: "#58A6FF"
+    magenta: "#BC8CFF"
+    cyan: "#39D0D8"
+    white: "#F0F6FC"

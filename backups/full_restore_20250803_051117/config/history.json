@@ -1,0 +1,12 @@
+{
+  "max_entries": 10000,
+  "dedup_consecutive": true,
+  "save_on_exit": true,
+  "exclude_patterns": [
+    "rm -rf *",
+    "sudo rm *",
+    "passwd*",
+    "ssh-keygen*"
+  ],
+  "include_timestamps": true
+}
