@@ -1,0 +1,7 @@
+{
+  "name": "Bash",
+  "command": "/bin/bash",
+  "args": ["--login"],
+  "env": {},
+  "working_directory": "~"
+}

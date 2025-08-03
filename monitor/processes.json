@@ -1,0 +1,56 @@
+[
+  {
+    "pid": 74634,
+    "ppid": 0,
+    "command": "/Volumes/Warp/WarpPreview.app/Contents/MacOS/preview --server --parent-pid=74626",
+    "started": "2025-08-03 15:36:59.868316",
+    "cpu_percent": 0.0,
+    "memory_mb": 0.0,
+    "status": "running"
+  },
+  {
+    "pid": 74626,
+    "ppid": 0,
+    "command": "/Volumes/Warp/WarpPreview.app/Contents/MacOS/preview",
+    "started": "2025-08-03 15:36:59.868348",
+    "cpu_percent": 0.0,
+    "memory_mb": 5.12,
+    "status": "running"
+  },
+  {
+    "pid": 64587,
+    "ppid": 0,
+    "command": "/private/var/folders/g4/439j6bh567352p6dtnlhx5000000gq/T/AppTranslocation/71662E94-A707-4C70-BF90-8652110AC5CE/d/WarpPreview.app/Contents/MacOS/preview --server --parent-pid=64398",
+    "started": "2025-08-03 15:36:59.868354",
+    "cpu_percent": 0.0,
+    "memory_mb": 0.0,
+    "status": "running"
+  },
+  {
+    "pid": 64398,
+    "ppid": 0,
+    "command": "/private/var/folders/g4/439j6bh567352p6dtnlhx5000000gq/T/AppTranslocation/71662E94-A707-4C70-BF90-8652110AC5CE/d/WarpPreview.app/Contents/MacOS/preview",
+    "started": "2025-08-03 15:36:59.868358",
+    "cpu_percent": 0.0,
+    "memory_mb": 8.192,
+    "status": "running"
+  },
+  {
+    "pid": 80499,
+    "ppid": 0,
+    "command": "/Volumes/Warp/WarpPreview.app/Contents/MacOS/preview --server --parent-pid=80498",
+    "started": "2025-08-03 15:36:59.868381",
+    "cpu_percent": 0.0,
+    "memory_mb": 0.0,
+    "status": "running"
+  },
+  {
+    "pid": 80498,
+    "ppid": 0,
+    "command": "/Volumes/Warp/WarpPreview.app/Contents/MacOS/preview",
+    "started": "2025-08-03 15:36:59.868384",
+    "cpu_percent": 0.0,
+    "memory_mb": 3.072,
+    "status": "running"
+  }
+]

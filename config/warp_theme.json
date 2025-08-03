@@ -1,0 +1,80 @@
+{
+  "theme_name": "WarpPreview",
+  "version": "1.0.0",
+  "description": "Official Warp Terminal theme matching WarpPreview.app",
+  "colors": {
+    "primary": "#00D1FF",
+    "secondary": "#0099CC",
+    "accent": "#00D1FF",
+    "background": "#0D1117",
+    "surface": "#161B22",
+    "surface_variant": "#21262D",
+    "on_primary": "#FFFFFF",
+    "on_secondary": "#FFFFFF",
+    "on_background": "#F0F6FC",
+    "on_surface": "#E6EDF3",
+    "success": "#238636",
+    "warning": "#D29922",
+    "error": "#DA3633",
+    "info": "#0969DA"
+  },
+  "typography": {
+    "font_family": "SF Mono",
+    "font_size": 14,
+    "line_height": 1.4,
+    "font_weight": "normal"
+  },
+  "ui_elements": {
+    "border_radius": {
+      "small": 6,
+      "medium": 12,
+      "large": 16
+    },
+    "shadows": {
+      "small": {
+        "offset": [0, 2],
+        "blur": 8,
+        "color": "rgba(0, 0, 0, 0.2)"
+      },
+      "medium": {
+        "offset": [0, 4],
+        "blur": 16,
+        "color": "rgba(0, 0, 0, 0.3)"
+      },
+      "large": {
+        "offset": [0, 8],
+        "blur": 32,
+        "color": "rgba(0, 0, 0, 0.4)"
+      }
+    },
+    "glass_morphism": {
+      "blur": 20,
+      "opacity": 0.12,
+      "border_opacity": 0.15
+    }
+  },
+  "terminal": {
+    "background": "#0D1117",
+    "foreground": "#E6EDF3",
+    "cursor": "#00D1FF",
+    "selection": "rgba(0, 209, 255, 0.25)",
+    "colors": {
+      "black": "#21262D",
+      "red": "#F85149",
+      "green": "#7EE787",
+      "yellow": "#F9E2AF",
+      "blue": "#79C0FF",
+      "magenta": "#D2A8FF",
+      "cyan": "#39D0D8",
+      "white": "#E6EDF3",
+      "bright_black": "#8B949E",
+      "bright_red": "#FF7B72",
+      "bright_green": "#56D364",
+      "bright_yellow": "#E3B341",
+      "bright_blue": "#58A6FF",
+      "bright_magenta": "#BC8CFF",
+      "bright_cyan": "#39D0D8",
+      "bright_white": "#F0F6FC"
+    }
+  }
+}

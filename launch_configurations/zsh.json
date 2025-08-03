@@ -1,0 +1,7 @@
+{
+  "name": "Zsh",
+  "command": "/bin/zsh",
+  "args": ["--login"],
+  "env": {},
+  "working_directory": "~"
+}

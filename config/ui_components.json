@@ -1,0 +1,20 @@
+{
+  "glass_morphism": {
+    "blur_intensity": 10.0,
+    "opacity": 0.15,
+    "border_radius": 16,
+    "shadow_blur": 32
+  },
+  "modern_card": {
+    "default_elevation": 4.0,
+    "hover_elevation": 8.0,
+    "background": "rgba(0.08, 0.08, 0.08, 0.95)",
+    "border_radius": 12
+  },
+  "gradient_button": {
+    "primary_color": "#0050FF",
+    "secondary_color": "#00B3E6",
+    "hover_animation": true,
+    "shadow_animation": true
+  }
+}

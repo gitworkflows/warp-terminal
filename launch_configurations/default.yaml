@@ -1,0 +1,41 @@
+---
+name: "Default Configuration"
+description: "Default Warp terminal launch configuration"
+version: "1.0.0"
+
+# Shell configuration
+shell:
+  default: "/bin/zsh"
+  args: ["-l"]
+  
+# Environment variables
+environment:
+  TERM: "xterm-256color"
+  WARP_TERMINAL: "1"
+  
+# Terminal appearance
+appearance:
+  theme: "default_dark"
+  font_family: "JetBrains Mono"
+  font_size: 14
+  line_height: 1.2
+  cursor_style: "block"
+  
+# Terminal behavior
+behavior:
+  auto_cd_on_paste: true
+  confirm_quit: false
+  show_welcome_message: true
+  save_history: true
+  history_size: 10000
+  
+# Keybindings
+keybindings:
+  profile: "default-warp-keybindings"
+  
+# AI and advanced features
+features:
+  ai_command_search: true
+  smart_suggestions: true
+  workflow_execution: true
+  block_mode: true

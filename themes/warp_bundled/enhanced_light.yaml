@@ -1,0 +1,46 @@
+name: "Enhanced Light"
+author: "Warp Team"
+accent: "#0969DA"
+background: "#FFFFFF"
+foreground: "#24292F"
+details: "lighter"
+
+ui_colors:
+  primary: "#0969DA"
+  secondary: "#218BFF"
+  accent: "#0969DA"
+  success: "#116329"
+  warning: "#633C01"
+  error: "#CF222E"
+  info: "#0969DA"
+
+glass_morphism:
+  background: "rgba(255, 255, 255, 0.85)"
+  blur: 20
+  border: "rgba(0, 0, 0, 0.1)"
+
+terminal_colors:
+  normal:
+    black: "#24292F"
+    red: "#CF222E"
+    green: "#116329"
+    yellow: "#4D2D00"
+    blue: "#0969DA"
+    magenta: "#8250DF"
+    cyan: "#1B7C83"
+    white: "#6E7781"
+  bright:
+    black: "#656D76"
+    red: "#A40E26"
+    green: "#1A7F37"
+    yellow: "#633C01"
+    blue: "#218BFF"
+    magenta: "#A475F9"
+    cyan: "#3192AA"
+    white: "#8C959F"
+
+fonts:
+  primary: "SF Mono"
+  fallback: ["Menlo", "Monaco", "Courier New"]
+  size: 14
+  line_height: 1.4
